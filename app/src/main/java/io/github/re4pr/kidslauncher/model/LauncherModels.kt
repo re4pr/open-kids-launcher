@@ -80,12 +80,17 @@ data class ShelfMediaItem(
 data class AvatarConfig(
     val childNickname: String = "Explorer",
     val skinToneIndex: Int = 1,
-    val hairStyleIndex: Int = 1,
+    val cheekStyleIndex: Int = 1,
+    val hairStyleIndex: Int = 0,
     val hairColorIndex: Int = 0,
     val eyeStyleIndex: Int = 0,
+    val eyeColorIndex: Int = 0,
     val outfitIndex: Int = 0,
+    val outfitColorIndex: Int = 0, // 0 = outfit signature color, 1..N = custom dye
     val accessoryIndex: Int = 0,
-    val petIndex: Int = 0,
+    val wingsBackIndex: Int = 0,
+    val handFacePropIndex: Int = 0,
+    val petIndex: Int = 1,
 )
 
 @Serializable

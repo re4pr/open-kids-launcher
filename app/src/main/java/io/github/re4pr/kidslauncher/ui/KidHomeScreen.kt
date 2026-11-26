@@ -332,7 +332,7 @@ private fun Scenic3DHeroStage(
             // Left: Full-Body Real-Time 3D Avatar + Pet standing in the foreground landscape!
             Box(
                 modifier = Modifier
-                    .width(235.dp)
+                    .width(276.dp)
                     .fillMaxHeight(),
                 contentAlignment = Alignment.BottomCenter,
             ) {

@@ -22,8 +22,12 @@ Unlike closed commercial kids launchers, Open Kids Launcher contains **zero ads,
 
 ### 2. Google Kids Space–Inspired Real-Time 3D Avatar & Wardrobe Studio
 - Powered by a translucent **OpenGL ES 2.0 3D engine** (`TextureView` + `EGL14`) with soft wrap lighting, specular eye/crown highlights, and Fresnel rim glow.
-- Kids can **drag horizontally to spin their 3D character 360°**, **tap them to make them jump and wave**, or tap **3D Dress Up** to customize:
-  - **Skin tone**, **3D volumetric hairstyles & hair colors**, **eye expressions**, **3D outfits**, **3D crowns/unicorn horns/tiaras/hats**, **3D bobbing companion pets**, and **theme world**.
+- Kids can **drag horizontally to spin their 3D character 360°**, **tap them to make them jump and wave**, or tap **3D Dress Up** to customize across 7 categories:
+  - **Face & Eyes:** 8 skin tones, rosy blush/freckles/cheek stickers, 6 eye expressions, and 8 iris colors.
+  - **Sculpted 3D Hair:** 12 Bezier-swept hairstyles (cascading waves, twisted braids, ponytails, buns, curls, spikes) in 12 shades.
+  - **3D Outfits & Dyes:** 12 distinct 3D silhouettes (pleated ballgowns, mermaid fin gown, tutu, hoodie & jeans, overalls, astronaut suit, pajamas) + 10 color dyes.
+  - **Crowns, Wings & Props:** 12 crowns/horns/ears/hats, 8 animated flapping 3D wings/capes/jetpacks, and 8 held magic wands, scepters, microphones, and shades.
+  - **12 Animated 3D Sidekick Pets:** Arctic Snow Fox, Winged Unicorn, Baby Crystal Dragon, Golden Puppy, Fluffy Kitten, Coral Seahorse, Playful Dolphin, Cuddly Bunny, Baby Panda, Snowy Owl, Rainbow Butterfly, and Friendly Mini Robot.
 - **Mode-Reactive 3D Expressions:** Your child's 3D buddy automatically puts on 3D glasses during **School Time**, bounces cheerfully during **Tidy-Up Time**, and wears a starry 3D nightcap with peaceful sleeping eyes at **Bedtime**!
 
 ### 3. Living Scenic Worlds (4 Built-In Animated Worlds + Native `.gif` / `.webp` Support)
