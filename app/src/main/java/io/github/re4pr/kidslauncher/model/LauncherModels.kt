@@ -46,6 +46,7 @@ data class InstalledAppEntry(
     val label: String,
     val suggestedCategory: AppCategory,
     val isSuspendedByOs: Boolean,
+    val defaultAllowed: Boolean = false,
 )
 
 @Serializable

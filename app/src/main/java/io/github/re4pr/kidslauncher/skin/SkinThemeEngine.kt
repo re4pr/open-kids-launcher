@@ -10,6 +10,8 @@ data class ResolvedSkinPalette(
     val id: String,
     val displayName: String,
     val tagline: String,
+    val sceneAssetPath: String,
+    val customSceneUri: String,
     val skyTop: Color,
     val skyMid: Color,
     val skyBottom: Color,
@@ -40,12 +42,15 @@ object SkinThemeEngine {
         val baseOnSky = parseHexColor(skin.textOnSkyHex, Color.White)
 
         val label = customLabels[skin.id]?.takeIf { it.isNotBlank() } ?: skin.name
+        val defaultScene = skin.sceneAssetPath.ifBlank { "scenes/frost_kingdom.jpg" }
 
         return when (mode) {
             LauncherMode.FREE_PLAY -> ResolvedSkinPalette(
                 id = skin.id,
                 displayName = label,
                 tagline = skin.tagline,
+                sceneAssetPath = defaultScene,
+                customSceneUri = skin.customSceneUri,
                 skyTop = baseTop,
                 skyMid = baseMid,
                 skyBottom = baseBottom,
@@ -62,9 +67,11 @@ object SkinThemeEngine {
                 id = skin.id,
                 displayName = label,
                 tagline = "Focused learning atmosphere",
-                skyTop = lerp(baseTop, Color(0xFF1E4D6B), 0.55f),
-                skyMid = lerp(baseMid, Color(0xFF3E8E9E), 0.55f),
-                skyBottom = lerp(baseBottom, Color(0xFFD9F4EE), 0.55f),
+                sceneAssetPath = defaultScene,
+                customSceneUri = skin.customSceneUri,
+                skyTop = lerp(baseTop, Color(0xFF1E4D6B), 0.45f),
+                skyMid = lerp(baseMid, Color(0xFF3E8E9E), 0.45f),
+                skyBottom = lerp(baseBottom, Color(0xFFD9F4EE), 0.45f),
                 surfaceCard = Color(0xFFF7FCFA),
                 accentPrimary = lerp(basePrimary, Color(0xFF1B7F79), 0.5f),
                 accentSecondary = Color(0xFFFFC857),
@@ -78,6 +85,8 @@ object SkinThemeEngine {
                 id = skin.id,
                 displayName = label,
                 tagline = "Sparkle & tidy-up boost!",
+                sceneAssetPath = defaultScene,
+                customSceneUri = skin.customSceneUri,
                 skyTop = Color(0xFF9C3D14),
                 skyMid = Color(0xFFE76F51),
                 skyBottom = Color(0xFFFFE5B4),
@@ -93,14 +102,16 @@ object SkinThemeEngine {
             LauncherMode.BEDTIME, LauncherMode.LOCKED -> ResolvedSkinPalette(
                 id = skin.id,
                 displayName = label,
-                tagline = "Starlight bedtime sky",
+                tagline = "Starlight bedtime kingdom",
+                sceneAssetPath = "scenes/bedtime_dream.jpg",
+                customSceneUri = "",
                 skyTop = Color(0xFF090D24),
                 skyMid = Color(0xFF18224B),
                 skyBottom = Color(0xFF2D3970),
-                surfaceCard = Color(0xFF1E2749),
+                surfaceCard = Color(0xFF1A2342),
                 accentPrimary = Color(0xFF8ECAE6),
                 accentSecondary = Color(0xFFFFD166),
-                badgeHighlight = Color(0xFF9B89FF),
+                badgeHighlight = Color(0xFF7B61FF),
                 textPrimary = Color(0xFFF1F5FF),
                 textOnSky = Color(0xFFF8FAFF),
                 particleStyle = ParticleStyle.STARLIGHT,

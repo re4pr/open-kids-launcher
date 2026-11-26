@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.re4pr.kidslauncher.data.AppCatalogService
 import io.github.re4pr.kidslauncher.data.SettingsRepository
+import io.github.re4pr.kidslauncher.model.AppCategory
 import io.github.re4pr.kidslauncher.model.AvatarConfig
 import io.github.re4pr.kidslauncher.model.EffectivePolicyState
 import io.github.re4pr.kidslauncher.model.InstalledAppEntry
@@ -114,19 +115,21 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         settings,
     ) { installed, cfg ->
         installed.mapNotNull { entry ->
-            val rule = cfg.appRules[entry.packageName] ?: return@mapNotNull null
-            if (!rule.allowed) return@mapNotNull null
+            val rule = cfg.appRules[entry.packageName]
+            val isAllowed = rule?.allowed ?: entry.defaultAllowed
+            if (!isAllowed) return@mapNotNull null
             if (cfg.familyLinkBridgeEnabled && cfg.hideSuspendedApps && entry.isSuspendedByOs) {
                 return@mapNotNull null
             }
+            val effectiveCategory = rule?.category ?: entry.suggestedCategory
             KidAppTile(
                 packageName = entry.packageName,
-                displayName = rule.customLabel.ifBlank { entry.label },
-                category = rule.category,
-                favorite = rule.favorite,
+                displayName = rule?.customLabel?.ifBlank { entry.label } ?: entry.label,
+                category = effectiveCategory,
+                favorite = rule?.favorite ?: false,
                 isSuspendedByOs = cfg.familyLinkBridgeEnabled && entry.isSuspendedByOs,
-                allowedInSchoolTime = rule.allowedInSchoolTime,
-                allowedInBedtime = rule.allowedInBedtime,
+                allowedInSchoolTime = rule?.allowedInSchoolTime ?: (effectiveCategory == AppCategory.LEARNING),
+                allowedInBedtime = rule?.allowedInBedtime ?: (effectiveCategory == AppCategory.AUDIO),
             )
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())

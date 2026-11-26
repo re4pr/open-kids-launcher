@@ -16,6 +16,8 @@ data class SkinDefinition(
     val id: String,
     val name: String,
     val tagline: String = "",
+    val sceneAssetPath: String = "",
+    val customSceneUri: String = "",
     val skyTopHex: String,
     val skyMidHex: String,
     val skyBottomHex: String,

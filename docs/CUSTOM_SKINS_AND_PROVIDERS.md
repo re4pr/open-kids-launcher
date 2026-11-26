@@ -11,6 +11,8 @@ Themes in Open Kids Launcher are 100% data-driven JSON files. Built-in themes li
   "id": "dino_jungle",
   "name": "Dino Jungle",
   "tagline": "Lush ferns, sunshine & friendly dinosaurs",
+  "sceneAssetPath": "",
+  "customSceneUri": "https://example.org/themes/dino_jungle.gif",
   "skyTopHex": "#1B4332",
   "skyMidHex": "#2D6A4F",
   "skyBottomHex": "#B7E4C7",

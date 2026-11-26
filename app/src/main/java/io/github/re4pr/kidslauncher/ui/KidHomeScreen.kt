@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas as AndroidCanvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -14,6 +15,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,9 +29,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,14 +48,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.AutoStories
 import androidx.compose.material.icons.rounded.Bedtime
 import androidx.compose.material.icons.rounded.CleaningServices
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PauseCircle
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.School
@@ -64,7 +69,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -72,6 +76,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -89,6 +94,7 @@ import io.github.re4pr.kidslauncher.model.LauncherMode
 import io.github.re4pr.kidslauncher.model.LauncherTab
 import io.github.re4pr.kidslauncher.model.RecentLaunchRecord
 import io.github.re4pr.kidslauncher.model.ShelfMediaItem
+import io.github.re4pr.kidslauncher.model.SkinDefinition
 import io.github.re4pr.kidslauncher.skin.AnimatedSkyBackground
 import io.github.re4pr.kidslauncher.skin.ResolvedSkinPalette
 
@@ -108,8 +114,11 @@ fun KidHomeScreen(
     palette: ResolvedSkinPalette,
     avatar: AvatarConfig,
     policy: EffectivePolicyState,
+    availableSkins: List<SkinDefinition>,
+    customSkinLabels: Map<String, String>,
     selectedTab: LauncherTab,
     onSelectTab: (LauncherTab) -> Unit,
+    onQuickSelectSkin: (String) -> Unit,
     approvedApps: List<KidAppTile>,
     recentRecords: List<RecentLaunchRecord>,
     pluginItems: List<ShelfMediaItem>,
@@ -127,43 +136,45 @@ fun KidHomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(horizontal = 18.dp, vertical = 12.dp)
+                .navigationBarsPadding()
+                .padding(horizontal = 18.dp, vertical = 8.dp)
         ) {
-            // Top Kid Header + Hidden Parent Gate Trigger
-            TopKidBanner(
-                palette = palette,
-                avatar = avatar,
-                policy = policy,
-                onOpenAvatarStudio = onOpenAvatarStudio,
-                onParentTapHint = {
-                    android.widget.Toast.makeText(
-                        context,
-                        "Parents: press and hold lock icon",
-                        android.widget.Toast.LENGTH_SHORT,
-                    ).show()
-                },
-                onParentLongPress = onRequestParentAccess,
-            )
-
-            Spacer(Modifier.height(12.dp))
+            // Compact Top Glass Bar on Non-Home Tabs; Full Scenic 3D Hero Stage inside Home Tab!
+            if (selectedTab != LauncherTab.HOME) {
+                CompactTopBar(
+                    palette = palette,
+                    avatar = avatar,
+                    policy = policy,
+                    onOpenAvatarStudio = onOpenAvatarStudio,
+                    onParentTapHint = {
+                        Toast.makeText(context, "Parents: press and hold lock icon", Toast.LENGTH_SHORT).show()
+                    },
+                    onParentLongPress = onRequestParentAccess,
+                )
+                Spacer(Modifier.height(10.dp))
+            }
 
             // Main Content Area (Mode-reactive)
             Box(modifier = Modifier.weight(1f)) {
                 when {
                     policy.activeMode == LauncherMode.LOCKED -> {
-                        ModeStateCard(
+                        ModeState3DCard(
                             palette = palette,
                             avatar = avatar,
                             mode = LauncherMode.LOCKED,
                             headline = "Time for a Screen Break!",
                             body = "Great job today! Take a stretch, play outside, or ask a parent if you need more time.",
                             countdownText = null,
+                            onParentTapHint = {
+                                Toast.makeText(context, "Parents: press and hold lock icon", Toast.LENGTH_SHORT).show()
+                            },
+                            onParentLongPress = onRequestParentAccess,
                         )
                     }
                     policy.activeMode == LauncherMode.TIDY_UP -> {
                         val mins = policy.tidyUpSecondsRemaining / 60
                         val secs = policy.tidyUpSecondsRemaining % 60
-                        ModeStateCard(
+                        ModeState3DCard(
                             palette = palette,
                             avatar = avatar,
                             mode = LauncherMode.TIDY_UP,
@@ -174,14 +185,22 @@ fun KidHomeScreen(
                             } else {
                                 "Tidy-Up Active"
                             },
+                            onParentTapHint = {
+                                Toast.makeText(context, "Parents: press and hold lock icon", Toast.LENGTH_SHORT).show()
+                            },
+                            onParentLongPress = onRequestParentAccess,
                         )
                     }
                     policy.activeMode == LauncherMode.BEDTIME && selectedTab == LauncherTab.HOME -> {
-                        BedtimeHomeCard(
+                        BedtimeHome3DCard(
                             palette = palette,
                             avatar = avatar,
                             allowAudio = LauncherTab.AUDIO in policy.allowedTabs,
                             onOpenAudio = { onSelectTab(LauncherTab.AUDIO) },
+                            onParentTapHint = {
+                                Toast.makeText(context, "Parents: press and hold lock icon", Toast.LENGTH_SHORT).show()
+                            },
+                            onParentLongPress = onRequestParentAccess,
                         )
                     }
                     else -> {
@@ -189,7 +208,16 @@ fun KidHomeScreen(
                             when (tab) {
                                 LauncherTab.HOME -> MainKidMenuContent(
                                     palette = palette,
+                                    avatar = avatar,
                                     policy = policy,
+                                    availableSkins = availableSkins,
+                                    customSkinLabels = customSkinLabels,
+                                    onQuickSelectSkin = onQuickSelectSkin,
+                                    onOpenAvatarStudio = onOpenAvatarStudio,
+                                    onParentTapHint = {
+                                        Toast.makeText(context, "Parents: press and hold lock icon", Toast.LENGTH_SHORT).show()
+                                    },
+                                    onParentLongPress = onRequestParentAccess,
                                     approvedApps = approvedApps,
                                     recentRecords = recentRecords,
                                     pluginItems = pluginItems,
@@ -199,8 +227,8 @@ fun KidHomeScreen(
                                     onLaunchApp = onLaunchApp,
                                 )
                                 LauncherTab.GAMES -> CategoryAppsScreen(
-                                    title = if (policy.activeMode == LauncherMode.SCHOOL_TIME) "Learning Games" else "Games",
-                                    emptyMessage = "No games added yet — ask a parent to pick your favorite games!",
+                                    title = if (policy.activeMode == LauncherMode.SCHOOL_TIME) "Learning Games" else "Games (${filterAppsForTab(approvedApps, AppCategory.GAMES, policy.activeMode).size})",
+                                    emptyMessage = "No games enabled right now — ask a parent to hold the lock icon to manage apps!",
                                     palette = palette,
                                     apps = filterAppsForTab(approvedApps, AppCategory.GAMES, policy.activeMode),
                                     shelfItems = pluginItems.filter { it.category == AppCategory.GAMES },
@@ -210,7 +238,7 @@ fun KidHomeScreen(
                                 )
                                 LauncherTab.VIDEOS -> CategoryAppsScreen(
                                     title = "Shows & Movies",
-                                    emptyMessage = "Ask a parent to enable video apps or Continue Watching plugins!",
+                                    emptyMessage = "No video apps enabled yet — ask a parent to enable video apps or Continue Watching feeds!",
                                     palette = palette,
                                     apps = filterAppsForTab(approvedApps, AppCategory.VIDEOS, policy.activeMode),
                                     shelfItems = pluginItems.filter { it.category == AppCategory.VIDEOS },
@@ -228,7 +256,7 @@ fun KidHomeScreen(
                                 )
                                 LauncherTab.AUDIO -> CategoryAppsScreen(
                                     title = "Music & Stories",
-                                    emptyMessage = "Ask a parent to add your offline Yoto or music player here!",
+                                    emptyMessage = "Ask a parent to enable your offline Yoto or music player here!",
                                     palette = palette,
                                     apps = filterAppsForTab(approvedApps, AppCategory.AUDIO, policy.activeMode),
                                     shelfItems = pluginItems.filter { it.category == AppCategory.AUDIO },
@@ -242,9 +270,9 @@ fun KidHomeScreen(
                 }
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(8.dp))
 
-            // Dynamic Kid-Friendly Floating Bottom Navigation Bar
+            // Dynamic Kid-Friendly Floating Glass Dock
             KidFloatingNavBar(
                 palette = palette,
                 allowedTabs = policy.allowedTabs,
@@ -274,9 +302,177 @@ private fun filterAppsForTab(
     }.sortedWith(compareByDescending<KidAppTile> { it.favorite }.thenBy { it.displayName.lowercase() })
 }
 
+/**
+ * Google Kids Space–inspired Scenic 3D Hero Stage at the top of the Main Menu!
+ * Shows the child's animated 3D character + 3D pet standing right inside the living
+ * Castle / Unicorn / Princess / Mermaid world, alongside glassmorphic theme switchers.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun TopKidBanner(
+private fun Scenic3DHeroStage(
+    palette: ResolvedSkinPalette,
+    avatar: AvatarConfig,
+    policy: EffectivePolicyState,
+    availableSkins: List<SkinDefinition>,
+    customSkinLabels: Map<String, String>,
+    onQuickSelectSkin: (String) -> Unit,
+    onOpenAvatarStudio: () -> Unit,
+    onParentTapHint: () -> Unit,
+    onParentLongPress: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(236.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Left: Full-Body Real-Time 3D Avatar + Pet standing in the foreground landscape!
+            Box(
+                modifier = Modifier
+                    .width(235.dp)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                Avatar3DStage(
+                    avatar = avatar,
+                    mode = policy.activeMode,
+                    rimHighlightColor = palette.accentSecondary,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = palette.accentPrimary,
+                    border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.85f)),
+                    shadowElevation = 6.dp,
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
+                        .clickable(onClick = onOpenAvatarStudio),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                        Text("3D Dress Up", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.ExtraBold, color = Color.White)
+                    }
+                }
+            }
+
+            Spacer(Modifier.width(12.dp))
+
+            // Right: Floating Frosted Glass Greeting & Theme World Picker
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(26.dp),
+                        color = Color.Black.copy(alpha = 0.34f),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.42f)),
+                    ) {
+                        Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp)) {
+                            Text(
+                                text = "Hi, ${avatar.childNickname}!",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.White,
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Surface(
+                                    shape = RoundedCornerShape(50),
+                                    color = palette.badgeHighlight,
+                                ) {
+                                    Text(
+                                        text = "${palette.displayName} • ${policy.activeMode.title}",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                    )
+                                }
+                                if (policy.dailyBudgetMinutes > 0 && policy.activeMode == LauncherMode.FREE_PLAY) {
+                                    Surface(
+                                        shape = RoundedCornerShape(50),
+                                        color = Color.White.copy(alpha = 0.24f),
+                                    ) {
+                                        Text(
+                                            text = "${policy.remainingMinutesToday}m playtime",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Subtle Hidden Parent Gate Lock Icon (Hold to unlock)
+                    ParentLockBadge(onTap = onParentTapHint, onLongPress = onParentLongPress)
+                }
+
+                // Quick World Skin Switcher Pills right in the Hero Sky!
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(bottom = 8.dp),
+                ) {
+                    items(availableSkins, key = { it.id }) { skin ->
+                        val isCurrent = skin.id == palette.id
+                        val label = customSkinLabels[skin.id]?.takeIf { it.isNotBlank() } ?: skin.name
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = if (isCurrent) palette.accentPrimary else Color.Black.copy(alpha = 0.36f),
+                            border = BorderStroke(
+                                width = if (isCurrent) 2.dp else 1.dp,
+                                color = if (isCurrent) Color.White else Color.White.copy(alpha = 0.45f),
+                            ),
+                            modifier = Modifier.clickable { onQuickSelectSkin(skin.id) },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Palette,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp),
+                                )
+                                Text(
+                                    text = label,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.White,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun CompactTopBar(
     palette: ResolvedSkinPalette,
     avatar: AvatarConfig,
     policy: EffectivePolicyState,
@@ -285,110 +481,75 @@ private fun TopKidBanner(
     onParentLongPress: () -> Unit,
 ) {
     Surface(
-        shape = RoundedCornerShape(palette.cardCornerDp.dp),
-        color = Color.White.copy(alpha = 0.22f),
+        shape = RoundedCornerShape(24.dp),
+        color = Color.Black.copy(alpha = 0.34f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.38f)),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(24.dp))
-                    .clickable(onClick = onOpenAvatarStudio)
-                    .padding(4.dp),
-                contentAlignment = Alignment.BottomEnd,
+            Surface(
+                shape = RoundedCornerShape(50),
+                color = palette.accentPrimary,
+                modifier = Modifier.clickable(onClick = onOpenAvatarStudio),
             ) {
-                KidAvatarCanvas(
-                    avatar = avatar,
-                    mode = policy.activeMode,
-                    sizeDp = 76.dp,
-                )
-                Surface(
-                    shape = CircleShape,
-                    color = palette.accentPrimary,
-                    modifier = Modifier.size(24.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Edit,
-                        contentDescription = "Customize Avatar",
-                        tint = Color.White,
-                        modifier = Modifier.padding(4.dp),
-                    )
-                }
-            }
-
-            Spacer(Modifier.width(14.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Hi, ${avatar.childNickname}!",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = palette.textOnSky,
-                )
                 Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = palette.badgeHighlight.copy(alpha = 0.9f),
-                    ) {
-                        Text(
-                            text = "${palette.displayName} • ${policy.activeMode.title}",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                        )
-                    }
-                    if (policy.dailyBudgetMinutes > 0 && policy.activeMode == LauncherMode.FREE_PLAY) {
-                        Surface(
-                            shape = RoundedCornerShape(50),
-                            color = Color.Black.copy(alpha = 0.24f),
-                        ) {
-                            Text(
-                                text = "${policy.remainingMinutesToday}m left",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = Color.White,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                            )
-                        }
-                    }
+                    Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                    Text("${avatar.childNickname}'s 3D Buddy", color = Color.White, fontWeight = FontWeight.ExtraBold)
                 }
             }
-
-            // Subtle Parent Gate Badge (requires long-press + Master Passcode)
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.18f))
-                    .combinedClickable(
-                        onClick = onParentTapHint,
-                        onLongClick = onParentLongPress,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Lock,
-                    contentDescription = "Parent Controls (Hold)",
-                    tint = Color.White.copy(alpha = 0.72f),
-                    modifier = Modifier.size(18.dp),
-                )
-            }
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = "${palette.displayName} • ${policy.activeMode.title}",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier.weight(1f),
+            )
+            ParentLockBadge(onTap = onParentTapHint, onLongPress = onParentLongPress)
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun ParentLockBadge(onTap: () -> Unit, onLongPress: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(Color.Black.copy(alpha = 0.28f))
+            .combinedClickable(onClick = onTap, onLongClick = onLongPress),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Lock,
+            contentDescription = "Parent Controls (Hold)",
+            tint = Color.White.copy(alpha = 0.78f),
+            modifier = Modifier.size(18.dp),
+        )
     }
 }
 
 @Composable
 private fun MainKidMenuContent(
     palette: ResolvedSkinPalette,
+    avatar: AvatarConfig,
     policy: EffectivePolicyState,
+    availableSkins: List<SkinDefinition>,
+    customSkinLabels: Map<String, String>,
+    onQuickSelectSkin: (String) -> Unit,
+    onOpenAvatarStudio: () -> Unit,
+    onParentTapHint: () -> Unit,
+    onParentLongPress: () -> Unit,
     approvedApps: List<KidAppTile>,
     recentRecords: List<RecentLaunchRecord>,
     pluginItems: List<ShelfMediaItem>,
@@ -397,98 +558,155 @@ private fun MainKidMenuContent(
     onLaunchShelfItem: (ShelfMediaItem) -> Unit,
     onLaunchApp: (KidAppTile) -> Unit,
 ) {
-    val recentGames = recentRecords.filter { it.category == AppCategory.GAMES || it.category == AppCategory.LEARNING }.take(6)
-    val recentAudio = recentRecords.filter { it.category == AppCategory.AUDIO }.take(6)
-    val recentVideos = recentRecords.filter { it.category == AppCategory.VIDEOS }.take(6)
+    val recentGames = recentRecords.filter { it.category == AppCategory.GAMES || it.category == AppCategory.LEARNING }.take(8)
+    val recentAudio = recentRecords.filter { it.category == AppCategory.AUDIO }.take(8)
+    val recentVideos = recentRecords.filter { it.category == AppCategory.VIDEOS }.take(8)
     val continueWatchingPlugins = pluginItems.filter { it.category == AppCategory.VIDEOS }.take(8)
     val audioPlugins = pluginItems.filter { it.category == AppCategory.AUDIO }.take(8)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 12.dp),
     ) {
+        // Hero Stage with 3D Avatar + Scenic World!
+        item {
+            Scenic3DHeroStage(
+                palette = palette,
+                avatar = avatar,
+                policy = policy,
+                availableSkins = availableSkins,
+                customSkinLabels = customSkinLabels,
+                onQuickSelectSkin = onQuickSelectSkin,
+                onOpenAvatarStudio = onOpenAvatarStudio,
+                onParentTapHint = onParentTapHint,
+                onParentLongPress = onParentLongPress,
+            )
+        }
+
         if (policy.activeMode == LauncherMode.SCHOOL_TIME) {
             item {
                 val studyApps = approvedApps.filter { it.allowedInSchoolTime || it.category == AppCategory.LEARNING || it.category == AppCategory.BOOKS }
-                ShelfSectionTitle("School & Study Apps", Icons.Rounded.School, palette.textOnSky)
-                Spacer(Modifier.height(8.dp))
-                if (studyApps.isEmpty()) {
-                    FriendlyEmptyBanner("School Time is active! Ask a parent to mark learning apps for School Time.", palette)
-                } else {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(studyApps, key = { it.packageName }) { app ->
-                            BouncyAppCard(app = app, palette = palette, loadAppIcon = loadAppIcon, onClick = { onLaunchApp(app) })
+                GlassShelfContainer(palette = palette) {
+                    ShelfSectionTitle("School & Study Apps", Icons.Rounded.School, palette.textPrimary)
+                    Spacer(Modifier.height(10.dp))
+                    if (studyApps.isEmpty()) {
+                        Text(
+                            text = "School Time is active! Ask a parent to mark learning apps for School Time.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = palette.textPrimary,
+                        )
+                    } else {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            items(studyApps, key = { it.packageName }) { app ->
+                                BouncyAppCard(app = app, palette = palette, loadAppIcon = loadAppIcon, onClick = { onLaunchApp(app) })
+                            }
                         }
                     }
                 }
             }
         } else {
-            // 1. Last Played Games
+            // 1. Last Played / Featured Games Shelf
             item {
-                ShelfSectionTitle("Last Played Games", Icons.Rounded.SportsEsports, palette.textOnSky)
-                Spacer(Modifier.height(8.dp))
-                val fallbackGames = approvedApps.filter { it.category == AppCategory.GAMES || it.category == AppCategory.LEARNING }.take(5)
-                when {
-                    recentGames.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(recentGames, key = { it.id }) { rec ->
-                            RecentCard(rec, palette, loadAppIcon) { onLaunchRecent(rec) }
+                val fallbackGames = filterAppsForTab(approvedApps, AppCategory.GAMES, policy.activeMode).take(8)
+                GlassShelfContainer(palette = palette) {
+                    ShelfSectionTitle(
+                        title = if (recentGames.isNotEmpty()) "Jump Back In — Games" else "Your Games",
+                        icon = Icons.Rounded.SportsEsports,
+                        color = palette.textPrimary,
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    when {
+                        recentGames.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            items(recentGames, key = { it.id }) { rec ->
+                                RecentCard(rec, palette, loadAppIcon) { onLaunchRecent(rec) }
+                            }
                         }
-                    }
-                    fallbackGames.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(fallbackGames, key = { it.packageName }) { app ->
-                            BouncyAppCard(app, palette, loadAppIcon) { onLaunchApp(app) }
+                        fallbackGames.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            items(fallbackGames, key = { it.packageName }) { app ->
+                                BouncyAppCard(app, palette, loadAppIcon) { onLaunchApp(app) }
+                            }
                         }
+                        else -> Text("No games found yet!", color = palette.textPrimary)
                     }
-                    else -> FriendlyEmptyBanner("Play a game from the Games menu and it will pop up right here!", palette)
                 }
             }
 
-            // 2. Last Played Music & Audio
+            // 2. Continue Watching — Shows & Movies Shelf
             item {
-                ShelfSectionTitle("Last Played Music & Stories", Icons.Rounded.MusicNote, palette.textOnSky)
-                Spacer(Modifier.height(8.dp))
-                val fallbackAudio = approvedApps.filter { it.category == AppCategory.AUDIO }.take(5)
-                when {
-                    audioPlugins.isNotEmpty() || recentAudio.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(audioPlugins, key = { it.id }) { item ->
-                            PluginPosterCard(item, palette) { onLaunchShelfItem(item) }
+                val fallbackVideos = filterAppsForTab(approvedApps, AppCategory.VIDEOS, policy.activeMode).take(8)
+                GlassShelfContainer(palette = palette) {
+                    ShelfSectionTitle(
+                        title = "Shows & Movies",
+                        icon = Icons.Rounded.Movie,
+                        color = palette.textPrimary,
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    when {
+                        continueWatchingPlugins.isNotEmpty() || recentVideos.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            items(continueWatchingPlugins, key = { it.id }) { item ->
+                                PluginPosterCard(item, palette) { onLaunchShelfItem(item) }
+                            }
+                            items(recentVideos, key = { it.id }) { rec ->
+                                RecentCard(rec, palette, loadAppIcon) { onLaunchRecent(rec) }
+                            }
                         }
-                        items(recentAudio, key = { it.id }) { rec ->
-                            RecentCard(rec, palette, loadAppIcon) { onLaunchRecent(rec) }
+                        fallbackVideos.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            items(fallbackVideos, key = { it.packageName }) { app ->
+                                BouncyAppCard(app, palette, loadAppIcon) { onLaunchApp(app) }
+                            }
                         }
+                        else -> Text("Open Netflix, Nuvio, or connect a Continue Watching feed in Parent Settings!", color = palette.textPrimary)
                     }
-                    fallbackAudio.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(fallbackAudio, key = { it.packageName }) { app ->
-                            BouncyAppCard(app, palette, loadAppIcon) { onLaunchApp(app) }
-                        }
-                    }
-                    else -> FriendlyEmptyBanner("Listen to stories or songs in the Audio menu to see them here!", palette)
                 }
             }
 
-            // 3. Last Played TV Shows & Movies / Continue Watching
+            // 3. Music & Audio Stories Shelf
             item {
-                ShelfSectionTitle("Continue Watching — Shows & Movies", Icons.Rounded.Movie, palette.textOnSky)
-                Spacer(Modifier.height(8.dp))
-                val fallbackVideos = approvedApps.filter { it.category == AppCategory.VIDEOS }.take(5)
-                when {
-                    continueWatchingPlugins.isNotEmpty() || recentVideos.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(continueWatchingPlugins, key = { it.id }) { item ->
-                            PluginPosterCard(item, palette) { onLaunchShelfItem(item) }
+                val fallbackAudio = filterAppsForTab(approvedApps, AppCategory.AUDIO, policy.activeMode).take(8)
+                GlassShelfContainer(palette = palette) {
+                    ShelfSectionTitle(
+                        title = "Music & Audio Stories",
+                        icon = Icons.Rounded.MusicNote,
+                        color = palette.textPrimary,
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    when {
+                        audioPlugins.isNotEmpty() || recentAudio.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            items(audioPlugins, key = { it.id }) { item ->
+                                PluginPosterCard(item, palette) { onLaunchShelfItem(item) }
+                            }
+                            items(recentAudio, key = { it.id }) { rec ->
+                                RecentCard(rec, palette, loadAppIcon) { onLaunchRecent(rec) }
+                            }
                         }
-                        items(recentVideos, key = { it.id }) { rec ->
-                            RecentCard(rec, palette, loadAppIcon) { onLaunchRecent(rec) }
+                        fallbackAudio.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            items(fallbackAudio, key = { it.packageName }) { app ->
+                                BouncyAppCard(app, palette, loadAppIcon) { onLaunchApp(app) }
+                            }
                         }
+                        else -> Text("Your offline Yoto & music players appear right here!", color = palette.textPrimary)
                     }
-                    fallbackVideos.isNotEmpty() -> LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(fallbackVideos, key = { it.packageName }) { app ->
-                            BouncyAppCard(app, palette, loadAppIcon) { onLaunchApp(app) }
-                        }
-                    }
-                    else -> FriendlyEmptyBanner("Your recent shows & movies will appear right here!", palette)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun GlassShelfContainer(
+    palette: ResolvedSkinPalette,
+    content: @Composable () -> Unit,
+) {
+    Surface(
+        shape = RoundedCornerShape(palette.cardCornerDp.dp),
+        color = palette.surfaceCard.copy(alpha = 0.78f),
+        border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.65f)),
+        shadowElevation = 6.dp,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)) {
+            content()
         }
     }
 }
@@ -505,13 +723,20 @@ private fun CategoryAppsScreen(
     onLaunchShelfItem: (ShelfMediaItem) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.ExtraBold,
-            color = palette.textOnSky,
-            modifier = Modifier.padding(bottom = 10.dp),
-        )
+        Surface(
+            shape = RoundedCornerShape(50),
+            color = Color.Black.copy(alpha = 0.34f),
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.4f)),
+            modifier = Modifier.padding(bottom = 12.dp),
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
+            )
+        }
 
         if (shelfItems.isNotEmpty()) {
             LazyRow(
@@ -525,10 +750,12 @@ private fun CategoryAppsScreen(
         }
 
         if (apps.isEmpty() && shelfItems.isEmpty()) {
-            FriendlyEmptyBanner(emptyMessage, palette)
+            GlassShelfContainer(palette = palette) {
+                Text(emptyMessage, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, color = palette.textPrimary)
+            }
         } else {
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 150.dp),
+                columns = GridCells.Adaptive(minSize = 152.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(bottom = 12.dp),
@@ -570,12 +797,13 @@ private fun BooksMenuScreen(
             onLaunchShelfItem = onLaunchShelfItem,
         )
     } else {
-        // Intentional welcoming empty bookshelf ready for future BookServiceProvider connectors
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Card(
                 shape = RoundedCornerShape(palette.cardCornerDp.dp),
-                colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.94f)),
-                modifier = Modifier.fillMaxWidth(0.78f),
+                colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.90f)),
+                border = BorderStroke(2.dp, Color.White.copy(alpha = 0.75f)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                modifier = Modifier.fillMaxWidth(0.76f),
             ) {
                 Column(
                     modifier = Modifier.padding(32.dp),
@@ -585,7 +813,7 @@ private fun BooksMenuScreen(
                         imageVector = Icons.Rounded.AutoStories,
                         contentDescription = null,
                         tint = palette.accentPrimary,
-                        modifier = Modifier.size(68.dp),
+                        modifier = Modifier.size(72.dp),
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
@@ -599,7 +827,7 @@ private fun BooksMenuScreen(
                     Text(
                         text = "Storybooks are coming soon! Parents can connect any e-book reader app or OPDS/JSON book library plugin whenever ready.",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = palette.textPrimary.copy(alpha = 0.8f),
+                        color = palette.textPrimary.copy(alpha = 0.82f),
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -636,28 +864,29 @@ private fun BouncyAppCard(
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.92f else 1f,
+        targetValue = if (pressed) 0.91f else 1f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
         label = "cardBounce",
     )
     val iconBitmap = remember(app.packageName) { loadAppIcon(app.packageName)?.toImageBitmap() }
 
     Card(
-        shape = RoundedCornerShape(palette.cardCornerDp.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (app.isSuspendedByOs) {
                 palette.surfaceCard.copy(alpha = 0.55f)
             } else {
-                palette.surfaceCard.copy(alpha = 0.95f)
+                Color.White.copy(alpha = 0.96f)
             }
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        border = BorderStroke(1.5.dp, palette.accentSecondary.copy(alpha = 0.55f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         modifier = modifier
-            .width(156.dp)
+            .width(154.dp)
             .scale(scale)
             .clickable(interactionSource = interactionSource, indication = null, onClick = onClick),
     ) {
-        Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Box(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
             if (app.favorite) {
                 Icon(
                     imageVector = Icons.Rounded.Star,
@@ -682,25 +911,29 @@ private fun BouncyAppCard(
                     Image(
                         bitmap = iconBitmap,
                         contentDescription = app.displayName,
-                        modifier = Modifier.size(68.dp).clip(RoundedCornerShape(18.dp)),
+                        modifier = Modifier.size(72.dp).clip(RoundedCornerShape(20.dp)),
                     )
                 } else {
                     Box(
                         modifier = Modifier
-                            .size(68.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(palette.accentPrimary.copy(alpha = 0.2f)),
+                            .size(72.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(palette.accentPrimary, palette.accentSecondary)
+                                )
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Icon(Icons.Rounded.PlayArrow, contentDescription = null, tint = palette.accentPrimary, modifier = Modifier.size(36.dp))
+                        Icon(Icons.Rounded.PlayArrow, contentDescription = null, tint = Color.White, modifier = Modifier.size(38.dp))
                     }
                 }
                 Spacer(Modifier.height(10.dp))
                 Text(
                     text = app.displayName,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.ExtraBold,
-                    color = palette.textPrimary,
+                    color = Color(0xFF1A2138),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
@@ -728,11 +961,12 @@ private fun RecentCard(
         record.packageName.takeIf { it.isNotBlank() }?.let { loadAppIcon(it)?.toImageBitmap() }
     }
     Card(
-        shape = RoundedCornerShape(palette.cardCornerDp.dp),
-        colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.95f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.96f)),
+        border = BorderStroke(1.5.dp, palette.accentSecondary.copy(alpha = 0.55f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
-            .width(184.dp)
+            .width(172.dp)
             .clickable(onClick = onClick),
     ) {
         Column(modifier = Modifier.padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -750,15 +984,15 @@ private fun RecentCard(
                 Image(
                     bitmap = iconBitmap,
                     contentDescription = record.title,
-                    modifier = Modifier.size(64.dp).clip(RoundedCornerShape(16.dp)),
+                    modifier = Modifier.size(68.dp).clip(RoundedCornerShape(18.dp)),
                 )
             }
             Spacer(Modifier.height(8.dp))
             Text(
                 text = record.title,
                 style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = palette.textPrimary,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color(0xFF1A2138),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -766,7 +1000,7 @@ private fun RecentCard(
                 Text(
                     text = record.subtitle,
                     style = MaterialTheme.typography.labelSmall,
-                    color = palette.textPrimary.copy(alpha = 0.7f),
+                    color = Color(0xFF4A5568),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -782,18 +1016,19 @@ private fun PluginPosterCard(
     onClick: () -> Unit,
 ) {
     Card(
-        shape = RoundedCornerShape(palette.cardCornerDp.dp),
-        colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.96f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.96f)),
+        border = BorderStroke(1.5.dp, palette.accentPrimary.copy(alpha = 0.45f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         modifier = Modifier
-            .width(210.dp)
+            .width(214.dp)
             .clickable(onClick = onClick),
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(108.dp)
+                    .height(112.dp)
                     .clip(RoundedCornerShape(18.dp))
                     .background(palette.accentPrimary.copy(alpha = 0.18f)),
                 contentAlignment = Alignment.Center,
@@ -822,7 +1057,7 @@ private fun PluginPosterCard(
                 text = item.title,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.ExtraBold,
-                color = palette.textPrimary,
+                color = Color(0xFF1A2138),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -830,7 +1065,7 @@ private fun PluginPosterCard(
                 Text(
                     text = item.subtitle,
                     style = MaterialTheme.typography.labelSmall,
-                    color = palette.textPrimary.copy(alpha = 0.72f),
+                    color = Color(0xFF4A5568),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -849,8 +1084,9 @@ private fun KidFloatingNavBar(
     val tabs = LauncherTab.entries.filter { it in allowedTabs }
     Surface(
         shape = RoundedCornerShape(36.dp),
-        color = palette.surfaceCard.copy(alpha = 0.94f),
-        shadowElevation = 10.dp,
+        color = palette.surfaceCard.copy(alpha = 0.90f),
+        border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.8f)),
+        shadowElevation = 12.dp,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -903,119 +1139,142 @@ private fun KidFloatingNavBar(
 }
 
 @Composable
-private fun ModeStateCard(
+private fun ModeState3DCard(
     palette: ResolvedSkinPalette,
     avatar: AvatarConfig,
     mode: LauncherMode,
     headline: String,
     body: String,
     countdownText: String?,
+    onParentTapHint: () -> Unit,
+    onParentLongPress: () -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.align(Alignment.TopEnd)) {
+            ParentLockBadge(onTap = onParentTapHint, onLongPress = onParentLongPress)
+        }
         Card(
             shape = RoundedCornerShape(palette.cardCornerDp.dp),
-            colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.95f)),
-            modifier = Modifier.fillMaxWidth(0.76f),
+            colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.90f)),
+            border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.55f)),
+            modifier = Modifier.fillMaxWidth(0.76f).align(Alignment.Center),
         ) {
-            Column(
-                modifier = Modifier.padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Row(
+                modifier = Modifier.padding(28.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                KidAvatarCanvas(avatar = avatar, mode = mode, sizeDp = 128.dp)
-                Spacer(Modifier.height(14.dp))
-                Text(
-                    text = headline,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = palette.textPrimary,
-                    textAlign = TextAlign.Center,
+                Avatar3DStage(
+                    avatar = avatar,
+                    mode = mode,
+                    rimHighlightColor = palette.accentSecondary,
+                    modifier = Modifier.size(210.dp),
                 )
-                if (countdownText != null) {
-                    Spacer(Modifier.height(8.dp))
-                    Surface(
-                        shape = RoundedCornerShape(20.dp),
-                        color = palette.accentPrimary,
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = headline,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = palette.textPrimary,
+                    )
+                    if (countdownText != null) {
+                        Spacer(Modifier.height(10.dp))
+                        Surface(
+                            shape = RoundedCornerShape(20.dp),
+                            color = palette.accentPrimary,
                         ) {
-                            Icon(Icons.Rounded.CleaningServices, contentDescription = null, tint = Color.White)
-                            Text(
-                                text = countdownText,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.White,
-                            )
+                            Row(
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                Icon(Icons.Rounded.CleaningServices, contentDescription = null, tint = Color.White)
+                                Text(
+                                    text = countdownText,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.White,
+                                )
+                            }
                         }
                     }
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        text = body,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = palette.textPrimary.copy(alpha = 0.88f),
+                    )
                 }
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    text = body,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = palette.textPrimary.copy(alpha = 0.85f),
-                    textAlign = TextAlign.Center,
-                )
             }
         }
     }
 }
 
 @Composable
-private fun BedtimeHomeCard(
+private fun BedtimeHome3DCard(
     palette: ResolvedSkinPalette,
     avatar: AvatarConfig,
     allowAudio: Boolean,
     onOpenAudio: () -> Unit,
+    onParentTapHint: () -> Unit,
+    onParentLongPress: () -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.align(Alignment.TopEnd)) {
+            ParentLockBadge(onTap = onParentTapHint, onLongPress = onParentLongPress)
+        }
         Card(
             shape = RoundedCornerShape(palette.cardCornerDp.dp),
-            colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.92f)),
-            modifier = Modifier.fillMaxWidth(0.76f),
+            colors = CardDefaults.cardColors(containerColor = palette.surfaceCard.copy(alpha = 0.86f)),
+            border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.35f)),
+            modifier = Modifier.fillMaxWidth(0.78f).align(Alignment.Center),
         ) {
-            Column(
-                modifier = Modifier.padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Row(
+                modifier = Modifier.padding(28.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                KidAvatarCanvas(avatar = avatar, mode = LauncherMode.BEDTIME, sizeDp = 132.dp)
-                Spacer(Modifier.height(12.dp))
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Icon(Icons.Rounded.Bedtime, contentDescription = null, tint = palette.accentSecondary)
-                    Text(
-                        text = "Sweet Dreams, ${avatar.childNickname}!",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = palette.textPrimary,
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = if (allowAudio) {
-                        "Games & videos are tucked in for the night. You can still listen to calm bedtime stories or music!"
-                    } else {
-                        "It's bedtime! Rest well and your games & shows will be ready in the morning."
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = palette.textPrimary.copy(alpha = 0.85f),
-                    textAlign = TextAlign.Center,
+                Avatar3DStage(
+                    avatar = avatar,
+                    mode = LauncherMode.BEDTIME,
+                    rimHighlightColor = Color(0xFFFFE699),
+                    modifier = Modifier.size(210.dp),
                 )
-                if (allowAudio) {
-                    Spacer(Modifier.height(16.dp))
-                    Surface(
-                        shape = RoundedCornerShape(24.dp),
-                        color = palette.accentPrimary,
-                        modifier = Modifier.clickable(onClick = onOpenAudio),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(Icons.Rounded.Bedtime, contentDescription = null, tint = palette.accentSecondary)
+                        Text(
+                            text = "Sweet Dreams, ${avatar.childNickname}!",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = palette.textPrimary,
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = if (allowAudio) {
+                            "Games & videos are tucked in for the night. You can still listen to calm bedtime stories or music!"
+                        } else {
+                            "It's bedtime! Rest well and your games & shows will be ready in the morning."
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = palette.textPrimary.copy(alpha = 0.88f),
+                    )
+                    if (allowAudio) {
+                        Spacer(Modifier.height(16.dp))
+                        Surface(
+                            shape = RoundedCornerShape(24.dp),
+                            color = palette.accentPrimary,
+                            modifier = Modifier.clickable(onClick = onOpenAudio),
                         ) {
-                            Icon(Icons.Rounded.MusicNote, contentDescription = null, tint = Color.Black)
-                            Text("Open Bedtime Stories & Audio", fontWeight = FontWeight.ExtraBold, color = Color.Black)
+                            Row(
+                                modifier = Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                Icon(Icons.Rounded.MusicNote, contentDescription = null, tint = Color.Black)
+                                Text("Open Bedtime Stories & Audio", fontWeight = FontWeight.ExtraBold, color = Color.Black)
+                            }
                         }
                     }
                 }
@@ -1036,23 +1295,6 @@ private fun ShelfSectionTitle(title: String, icon: ImageVector, color: Color) {
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.ExtraBold,
             color = color,
-        )
-    }
-}
-
-@Composable
-private fun FriendlyEmptyBanner(message: String, palette: ResolvedSkinPalette) {
-    Surface(
-        shape = RoundedCornerShape(22.dp),
-        color = palette.surfaceCard.copy(alpha = 0.85f),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = palette.textPrimary,
-            modifier = Modifier.padding(18.dp),
         )
     }
 }

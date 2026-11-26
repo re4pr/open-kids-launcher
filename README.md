@@ -12,19 +12,22 @@ Unlike closed commercial kids launchers, Open Kids Launcher contains **zero ads,
 
 ## Key Features
 
-### 1. Kid-First Dynamic Menus & Animated World
-- **Home Menu:** Displays the child's animated custom avatar, active mode & screen-time badge, plus automatic quick-resume shelves for **Last Played Games**, **Last Played Music & Stories**, and **Continue Watching — Shows & Movies**.
-- **Games Menu:** Bouncy, spring-animated cards for parent-approved games and learning apps.
-- **Videos Menu:** Approved video apps (e.g., Netflix, Nuvio, YouTube Kids, Jellyfin) alongside rich poster shelves from enabled Continue Watching plugins.
+### 1. Kid-First Dynamic Menus & Smart Zero-Config App Discovery
+- **Automatic Kid App Discovery:** Out of the box, user-installed games, video apps (e.g., Netflix, Nuvio, YouTube, Jellyfin), and kid audio apps automatically appear in the right menus—while Android settings, browsers, app stores, VPNs, and utility helpers stay safely hidden unless a parent explicitly enables them.
+- **Home Menu:** Features an interactive **Scenic 3D Hero Stage** (where the child's full-body 3D character & 3D pet stand right inside the living theme world), quick theme world pills, and frosted-glass shelves for **Games**, **Shows & Movies**, and **Music & Audio Stories**.
+- **Games Menu:** Bouncy, spring-animated cards for approved games and learning apps.
+- **Videos Menu:** Video apps alongside rich poster shelves from enabled Continue Watching plugins.
 - **Books Menu:** Welcoming empty bookshelf out of the box, backed by a pluggable `BookServiceProvider` / JSON book connector ready whenever you add reader apps or book services.
-- **Audio Menu:** Dedicated space for kid-safe music and story players (such as offline audiobook/Yoto players or music apps) plus optional audio shelf feeds.
+- **Audio Menu:** Dedicated space for kid-safe music and story players plus optional audio shelf feeds.
 
-### 2. Google Kids Space–Inspired Avatar & World Studio
-- Kids tap their animated buddy in the top banner to customize:
-  - **Skin tone**, **hairstyle & hair color**, **eye expressions**, **outfits**, **crowns/horns/hats**, **companion pets**, and **theme world**.
-- **Mode-Reactive Expressions:** Your child's avatar automatically puts on reading glasses during **School Time**, waves sparkles during **Tidy-Up Time**, and wears a starry nightcap with peaceful sleeping eyes at **Bedtime**!
+### 2. Google Kids Space–Inspired Real-Time 3D Avatar & Wardrobe Studio
+- Powered by a translucent **OpenGL ES 2.0 3D engine** (`TextureView` + `EGL14`) with soft wrap lighting, specular eye/crown highlights, and Fresnel rim glow.
+- Kids can **drag horizontally to spin their 3D character 360°**, **tap them to make them jump and wave**, or tap **3D Dress Up** to customize:
+  - **Skin tone**, **3D volumetric hairstyles & hair colors**, **eye expressions**, **3D outfits**, **3D crowns/unicorn horns/tiaras/hats**, **3D bobbing companion pets**, and **theme world**.
+- **Mode-Reactive 3D Expressions:** Your child's 3D buddy automatically puts on 3D glasses during **School Time**, bounces cheerfully during **Tidy-Up Time**, and wears a starry 3D nightcap with peaceful sleeping eyes at **Bedtime**!
 
-### 3. Mode-Reactive Timings & Restrictions
+### 3. Living Scenic Worlds (4 Built-In Animated Worlds + Native `.gif` / `.webp` Support)
+Ships with five high-resolution 3D storybook landscapes (`scenes/*.jpg`) animated with smooth cinemagraph camera pan/zoom, sweeping volumetric sunbeams/aurora light rays, and foreground particles—plus native Android `AnimatedImageDrawable` support for `.gif` and animated `.webp` custom skins!
 - **`Playtime (FREE_PLAY)`:** Vibrant theme sky, drifting particles, all approved menus active.
 - **`School & Study Time (SCHOOL_TIME)`:** Calm study atmosphere; Games & Videos hide while Books & approved learning apps stay accessible.
 - **`Tidy-Up Time (TIDY_UP)`:** Energetic Tidy-Up countdown banner that pauses games & shows until tidy-up finishes.

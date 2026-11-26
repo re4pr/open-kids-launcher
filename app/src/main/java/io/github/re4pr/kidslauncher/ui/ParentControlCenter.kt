@@ -541,7 +541,7 @@ private fun AppsManagementTab(
                 val rule = settings.appRules[app.packageName] ?: ManagedAppRule(
                     packageName = app.packageName,
                     category = app.suggestedCategory,
-                    allowed = false,
+                    allowed = app.defaultAllowed,
                 )
                 Card(
                     colors = CardDefaults.cardColors(

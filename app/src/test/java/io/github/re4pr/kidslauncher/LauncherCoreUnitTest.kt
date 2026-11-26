@@ -1,5 +1,6 @@
 package io.github.re4pr.kidslauncher
 
+import io.github.re4pr.kidslauncher.data.AppCatalogService
 import io.github.re4pr.kidslauncher.model.AppCategory
 import io.github.re4pr.kidslauncher.model.ContentPluginConfig
 import io.github.re4pr.kidslauncher.model.LauncherMode
@@ -136,5 +137,49 @@ class LauncherCoreUnitTest {
         assertEquals("Ocean Explorers", parsed[0].title)
         assertEquals(0.65f, parsed[0].progressFraction, 0.001f)
         assertEquals("com.example.mediaplayer", parsed[0].packageName)
+    }
+
+    @Test
+    fun appCatalog_autoShowsKidAppsAndHidesUtilities() {
+        assertTrue(
+            AppCatalogService.isDefaultKidVisibleCandidate(
+                packageName = "com.tocaboca.tocahairsalon4",
+                label = "Hair Salon 4",
+                appInfo = null,
+                category = AppCategory.GAMES,
+                homeLauncherPackages = setOf("com.sec.android.app.launcher"),
+                vpnPackages = setOf("com.example.vpn"),
+            )
+        )
+        assertTrue(
+            AppCatalogService.isDefaultKidVisibleCandidate(
+                packageName = "com.netflix.mediaclient",
+                label = "Netflix",
+                appInfo = null,
+                category = AppCategory.VIDEOS,
+                homeLauncherPackages = emptySet(),
+                vpnPackages = emptySet(),
+            )
+        )
+        assertFalse(
+            AppCatalogService.isDefaultKidVisibleCandidate(
+                packageName = "com.example.vpn",
+                label = "Safe VPN",
+                appInfo = null,
+                category = AppCategory.GAMES,
+                homeLauncherPackages = emptySet(),
+                vpnPackages = setOf("com.example.vpn"),
+            )
+        )
+        assertFalse(
+            AppCatalogService.isDefaultKidVisibleCandidate(
+                packageName = "com.android.chrome",
+                label = "Chrome",
+                appInfo = null,
+                category = AppCategory.GAMES,
+                homeLauncherPackages = emptySet(),
+                vpnPackages = emptySet(),
+            )
+        )
     }
 }

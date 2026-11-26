@@ -66,8 +66,13 @@ class MainActivity : ComponentActivity() {
                     palette = palette,
                     avatar = settings.avatar,
                     policy = policy,
+                    availableSkins = availableSkins,
+                    customSkinLabels = settings.customSkinLabels,
                     selectedTab = selectedTab,
                     onSelectTab = viewModel::selectTab,
+                    onQuickSelectSkin = { skinId ->
+                        viewModel.repository.updateSettings { it.copy(activeSkinId = skinId) }
+                    },
                     approvedApps = approvedApps,
                     recentRecords = recents,
                     pluginItems = pluginItems,
