@@ -12,8 +12,8 @@ android {
     applicationId = "io.github.re4pr.kidslauncher"
     minSdk = 28
     targetSdk = 34
-    versionCode = 3
-    versionName = "1.2.0"
+    versionCode = 4
+    versionName = "2.0.0"
   }
 
   buildTypes {
@@ -66,6 +66,7 @@ dependencies {
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.serialization.json)
   implementation(libs.coil.compose)
+  implementation(libs.androidx.media3.exoplayer)
   implementation(libs.okhttp)
 
   debugImplementation(libs.androidx.compose.ui.tooling)

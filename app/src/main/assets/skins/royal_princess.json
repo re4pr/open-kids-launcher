@@ -3,6 +3,7 @@
   "name": "Royal Princess",
   "tagline": "Sunlit rose palace & floating lanterns",
   "sceneAssetPath": "scenes/royal_princess.jpg",
+  "videoAssetPath": "videos/royal_princess.mp4",
   "skyTopHex": "#8A1C59",
   "skyMidHex": "#D94E8F",
   "skyBottomHex": "#FFE0EE",

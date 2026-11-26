@@ -11,6 +11,7 @@ data class ResolvedSkinPalette(
     val displayName: String,
     val tagline: String,
     val sceneAssetPath: String,
+    val videoAssetPath: String,
     val customSceneUri: String,
     val skyTop: Color,
     val skyMid: Color,
@@ -43,6 +44,7 @@ object SkinThemeEngine {
 
         val label = customLabels[skin.id]?.takeIf { it.isNotBlank() } ?: skin.name
         val defaultScene = skin.sceneAssetPath.ifBlank { "scenes/frost_kingdom.jpg" }
+        val defaultVideo = skin.videoAssetPath
 
         return when (mode) {
             LauncherMode.FREE_PLAY -> ResolvedSkinPalette(
@@ -50,6 +52,7 @@ object SkinThemeEngine {
                 displayName = label,
                 tagline = skin.tagline,
                 sceneAssetPath = defaultScene,
+                videoAssetPath = defaultVideo,
                 customSceneUri = skin.customSceneUri,
                 skyTop = baseTop,
                 skyMid = baseMid,
@@ -68,6 +71,7 @@ object SkinThemeEngine {
                 displayName = label,
                 tagline = "Focused learning atmosphere",
                 sceneAssetPath = defaultScene,
+                videoAssetPath = defaultVideo,
                 customSceneUri = skin.customSceneUri,
                 skyTop = lerp(baseTop, Color(0xFF1E4D6B), 0.45f),
                 skyMid = lerp(baseMid, Color(0xFF3E8E9E), 0.45f),
@@ -86,6 +90,7 @@ object SkinThemeEngine {
                 displayName = label,
                 tagline = "Sparkle & tidy-up boost!",
                 sceneAssetPath = defaultScene,
+                videoAssetPath = defaultVideo,
                 customSceneUri = skin.customSceneUri,
                 skyTop = Color(0xFF9C3D14),
                 skyMid = Color(0xFFE76F51),
@@ -104,6 +109,7 @@ object SkinThemeEngine {
                 displayName = label,
                 tagline = "Starlight bedtime kingdom",
                 sceneAssetPath = "scenes/bedtime_dream.jpg",
+                videoAssetPath = "videos/bedtime_dream.mp4",
                 customSceneUri = "",
                 skyTop = Color(0xFF090D24),
                 skyMid = Color(0xFF18224B),

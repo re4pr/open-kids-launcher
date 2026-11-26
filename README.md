@@ -20,18 +20,16 @@ Unlike closed commercial kids launchers, Open Kids Launcher contains **zero ads,
 - **Books Menu:** Welcoming empty bookshelf out of the box, backed by a pluggable `BookServiceProvider` / JSON book connector ready whenever you add reader apps or book services.
 - **Audio Menu:** Dedicated space for kid-safe music and story players plus optional audio shelf feeds.
 
-### 2. Google Kids Space–Inspired Real-Time 3D Avatar & Wardrobe Studio
-- Powered by a translucent **OpenGL ES 2.0 3D engine** (`TextureView` + `EGL14`) with soft wrap lighting, specular eye/crown highlights, and Fresnel rim glow.
-- Kids can **drag horizontally to spin their 3D character 360°**, **tap them to make them jump and wave**, or tap **3D Dress Up** to customize across 7 categories:
-  - **Face & Eyes:** 8 skin tones, rosy blush/freckles/cheek stickers, 6 eye expressions, and 8 iris colors.
-  - **Sculpted 3D Hair:** 12 Bezier-swept hairstyles (cascading waves, twisted braids, ponytails, buns, curls, spikes) in 12 shades.
-  - **3D Outfits & Dyes:** 12 distinct 3D silhouettes (pleated ballgowns, mermaid fin gown, tutu, hoodie & jeans, overalls, astronaut suit, pajamas) + 10 color dyes.
-  - **Crowns, Wings & Props:** 12 crowns/horns/ears/hats, 8 animated flapping 3D wings/capes/jetpacks, and 8 held magic wands, scepters, microphones, and shades.
-  - **12 Animated 3D Sidekick Pets:** Arctic Snow Fox, Winged Unicorn, Baby Crystal Dragon, Golden Puppy, Fluffy Kitten, Coral Seahorse, Playful Dolphin, Cuddly Bunny, Baby Panda, Snowy Owl, Rainbow Butterfly, and Friendly Mini Robot.
-- **Mode-Reactive 3D Expressions:** Your child's 3D buddy automatically puts on 3D glasses during **School Time**, bounces cheerfully during **Tidy-Up Time**, and wears a starry 3D nightcap with peaceful sleeping eyes at **Bedtime**!
+### 2. Google Kids Space–Inspired 2.5D Storybook Puppet & 16 3D-Shaded Pets
+- Uses a **2.5D airbrushed skeletal puppet rig** paired with high-resolution 3D-shaded props and companion pets—matching the 2.5D layered puppet approach used by Google Kids Space.
+- Kids can **swipe horizontally for 2.5D parallax tilt**, **tap to jump & sparkle**, or tap **Dress Up** to customize across 7 categories:
+  - **16 3D-Shaded Sidekick Pets:** Winged Baby Unicorn, Golden Puppy, Royal Poodle, Tabby Kitten, Fluffy Bunny, Emerald Dragon, Baby Arctic Seal, Lagoon Dolphin, Sea Turtle, Royal Swan, Pink Flamingo, Snowy Owl, Baby Panda, Cuddly Koala, Cute Hamster, and Star Companion Bot.
+  - **Storybook Dresses & Outfits:** 12 illustrated silhouettes (Frost Crystal Gown, Princess Rose Ballgown, Unicorn Rainbow Tulle, Mermaid Pearl Fin Gown, Fairy Blossom Dress, Ballerina Tutu, Star Hoodie & Jeans, Overalls, School Blazer, Astronaut Suit, Pajamas) + 10 color dyes.
+  - **Layered Hairstyles:** 12 multi-layered hairstyles (Flowing Waves, Thick Elsa Side Braid, Twin Braids, High Ponytail, Pigtails, Cloud Curls, Space Buns, Bob, Crown Braid) in 12 shades.
+  - **Face, Eyes, Crowns & Animated Wings:** 8 skin tones, rosy blush/freckles/star cheeks, 6 Disney-lash eye styles in 8 iris colors, 3D crowns/unicorn horns/bows/headphones, flapping 3D feathered Pegasus & butterfly fairy wings, and 3D magic wands.
 
-### 3. Living Scenic Worlds (4 Built-In Animated Worlds + Native `.gif` / `.webp` Support)
-Ships with five high-resolution 3D storybook landscapes (`scenes/*.jpg`) animated with smooth cinemagraph camera pan/zoom, sweeping volumetric sunbeams/aurora light rays, and foreground particles—plus native Android `AnimatedImageDrawable` support for `.gif` and animated `.webp` custom skins!
+### 3. Seamless Live Video Wallpaper Worlds (`ExoPlayer` H.264 `.mp4`)
+Ships with five enchanted 3D storybook worlds (`assets/videos/*.mp4` + `assets/scenes/*.jpg`) played as hardware-decoded, zero-CPU-overhead looping live video wallpapers (`Player.REPEAT_MODE_ONE`, automatically paused when backgrounded), plus custom `.mp4` / `.gif` / `.webp` skin support!
 - **`Playtime (FREE_PLAY)`:** Vibrant theme sky, drifting particles, all approved menus active.
 - **`School & Study Time (SCHOOL_TIME)`:** Calm study atmosphere; Games & Videos hide while Books & approved learning apps stay accessible.
 - **`Tidy-Up Time (TIDY_UP)`:** Energetic Tidy-Up countdown banner that pauses games & shows until tidy-up finishes.
@@ -103,6 +101,6 @@ The built APK is written to `app/build/outputs/apk/release/app-release.apk`.
 - **Local-First Storage:** Settings, salted PBKDF2 PIN hashes, and optional Home Assistant tokens are stored strictly in Android `MODE_PRIVATE` app storage (`allowBackup="false"`).
 - **Network Scope:** Network access is idle unless the parent explicitly configures a Home Assistant server or external shelf plugin URL.
 
-## License
+## License & Asset Credits
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). Selected 3D-shaded prop and animal companion sprites in `assets/puppet/` incorporate artwork from [Microsoft Fluent UI Emoji](https://github.com/microsoft/fluentui-emoji) (MIT License).

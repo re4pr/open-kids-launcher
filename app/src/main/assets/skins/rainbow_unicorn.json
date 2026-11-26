@@ -1,8 +1,9 @@
 {
   "id": "rainbow_unicorn",
   "name": "Rainbow Unicorn",
-  "tagline": "Unicorn meadow, waterfall & fairy towers",
+  "tagline": "Double rainbow waterfall & winged unicorns",
   "sceneAssetPath": "scenes/rainbow_unicorn.jpg",
+  "videoAssetPath": "videos/rainbow_unicorn.mp4",
   "skyTopHex": "#6B3FA0",
   "skyMidHex": "#C86DD7",
   "skyBottomHex": "#FFE3F7",

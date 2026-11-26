@@ -54,14 +54,14 @@ import io.github.re4pr.kidslauncher.model.SkinDefinition
 
 object AvatarCatalog {
     val skinTones = listOf(
-        Color(0xFFFFE7D3),
-        Color(0xFFF6D2B4),
-        Color(0xFFE7B892),
-        Color(0xFFD2996C),
-        Color(0xFFB4784E),
-        Color(0xFF935A37),
-        Color(0xFF704127),
-        Color(0xFF4E2B1A),
+        Color(0xFFFFEAD9),
+        Color(0xFFFAD7BD),
+        Color(0xFFEEC09B),
+        Color(0xFFD99E73),
+        Color(0xFFBC7D52),
+        Color(0xFF985D38),
+        Color(0xFF744327),
+        Color(0xFF522E1B),
     )
 
     val cheekStyles = listOf(
@@ -69,73 +69,72 @@ object AvatarCatalog {
         "Rosy Blush",
         "Cute Freckles",
         "Star Cheeks",
-        "Berry Glow",
+        "Heart Cheeks",
     )
 
     val eyeStyles = listOf(
-        "Pixar Lash",
+        "Disney Lash",
         "Big Sparkle",
         "Happy Smile",
         "Playful Wink",
         "Dreamy Almond",
-        "Starry Wide",
+        "Starry Eyes",
     )
 
     val eyeColors = listOf(
-        "Sapphire Blue" to Color(0xFF2575FC),
-        "Emerald Green" to Color(0xFF16A085),
-        "Warm Chestnut" to Color(0xFF6E3F24),
-        "Honey Amber" to Color(0xFFD48817),
-        "Amethyst Violet" to Color(0xFF8E44AD),
+        "Sapphire Blue" to Color(0xFF1D74F5),
+        "Emerald Green" to Color(0xFF12A580),
+        "Warm Chestnut" to Color(0xFF754224),
+        "Honey Amber" to Color(0xFFD98A16),
+        "Amethyst Violet" to Color(0xFF8C42BD),
         "Ocean Aqua" to Color(0xFF00B4D8),
-        "Rose Quartz" to Color(0xFFE05697),
-        "Deep Espresso" to Color(0xFF2B1E1A),
+        "Rose Quartz" to Color(0xFFE35296),
+        "Espresso" to Color(0xFF33211D),
     )
 
     val hairStyles = listOf(
-        "Long Wavy Locks",
-        "Twin Twisted Braids",
+        "Flowing Princess Waves",
+        "Thick Elsa Side Braid",
+        "Twin Ribbon Braids",
         "High Bouncy Ponytail",
-        "Twin Pigtail Ribbons",
-        "Princess Half-Up Curls",
+        "Twin Pigtails",
         "Fluffy Cloud Curls",
         "Side-Swept Bob",
         "Space Buns & Bangs",
         "Royal Crown Braid",
         "Short Pixie Crop",
-        "Swept Hero Spikes",
-        "Curtain Waves",
+        "Playful Spikes",
+        "Half-Up Fairy Curls",
     )
 
     val hairColors = listOf(
-        "Warm Chestnut" to Color(0xFF5C3824),
-        "Honey Blonde" to Color(0xFFE8BE5A),
-        "Platinum Frost" to Color(0xFFE8F6FF),
-        "Midnight Black" to Color(0xFF1F222E),
-        "Auburn Copper" to Color(0xFFA84224),
-        "Unicorn Pink" to Color(0xFFFF6BB5),
-        "Cotton Candy" to Color(0xFFFFA6DC),
-        "Royal Lavender" to Color(0xFF9E7BFF),
-        "Mermaid Teal" to Color(0xFF14C8B8),
-        "Sky Blue" to Color(0xFF48B2FF),
-        "Mint Sorbet" to Color(0xFF5CE6B8),
-        "Sunset Rose" to Color(0xFFFF6E7F),
+        "Warm Chestnut" to Color(0xFF613A24),
+        "Honey Blonde" to Color(0xFFEBBF52),
+        "Platinum Ice" to Color(0xFFE4F4FF),
+        "Midnight Black" to Color(0xFF232638),
+        "Auburn Copper" to Color(0xFFB34726),
+        "Unicorn Pink" to Color(0xFFFF66B3),
+        "Cotton Candy" to Color(0xFFFFA3DC),
+        "Royal Lavender" to Color(0xFF9E78FF),
+        "Mermaid Teal" to Color(0xFF10C8B8),
+        "Sky Blue" to Color(0xFF42AEFF),
+        "Mint Sorbet" to Color(0xFF55E6B5),
+        "Strawberry Coral" to Color(0xFFFF6B7A),
     )
 
-    // Outfits: index determines 3D silhouette (pleated gown, mermaid fin, hoodie+jeans, tutu, blazer+skirt, etc.)
     val outfits = listOf(
-        "Frost Queen Gown" to Color(0xFF32B5F4),        // 0: pleated gown + crystal sash
-        "Princess Ballgown" to Color(0xFFFF5D9E),       // 1: puffed-sleeve ballgown
-        "Unicorn Hoodie & Jeans" to Color(0xFFC77DFF),  // 2: hoodie + jeans + sneakers
-        "Mermaid Fin Gown" to Color(0xFF00BFA5),        // 3: seashell bodice + mermaid tail fin hem
-        "Fairy Blossom Dress" to Color(0xFFFF85C0),     // 4: petal pleated dress
-        "Ballerina Tutu" to Color(0xFFFFB3D9),          // 5: wide layered tutu + ballet slippers
-        "Explorer Jacket & Pants" to Color(0xFFFF9F1C), // 6: jacket + cargo pants + boots
-        "Superhero Suit" to Color(0xFFE63946),          // 7: hero suit + belt
-        "Denim Overalls" to Color(0xFF457B9D),          // 8: overalls + tee + sneakers
-        "School Blazer & Skirt" to Color(0xFF2B4C7E),   // 9: blazer + white collar + pleated skirt
-        "Space Astronaut" to Color(0xFFEDF2F4),         // 10: space suit + cyan trim
-        "Starlight Pajamas" to Color(0xFF6C63FF),       // 11: cozy two-piece pajamas
+        "Frost Crystal Gown" to Color(0xFF30B5F6),
+        "Princess Rose Ballgown" to Color(0xFFFF5E9E),
+        "Unicorn Rainbow Tulle" to Color(0xFFC77DFF),
+        "Mermaid Pearl Gown" to Color(0xFF00BFA5),
+        "Fairy Blossom Dress" to Color(0xFFFF85C2),
+        "Swan Ballerina Tutu" to Color(0xFFFFADD6),
+        "Star Hoodie & Jeans" to Color(0xFF9B72FF),
+        "Superhero Suit" to Color(0xFFE63946),
+        "Denim Overalls & Tee" to Color(0xFF457B9D),
+        "School Blazer & Skirt" to Color(0xFF2B4C7E),
+        "Space Explorer Suit" to Color(0xFFE2ECF5),
+        "Starlight Pajamas" to Color(0xFF6C63FF),
     )
 
     val outfitColorOverrides = listOf(
@@ -153,55 +152,60 @@ object AvatarCatalog {
 
     val accessories = listOf(
         "None",
-        "Crystal Ice Tiara",
-        "Golden Unicorn Horn",
         "Royal Jewelled Crown",
+        "Golden Unicorn Horn",
+        "Crystal Ice Tiara",
+        "Tropical Blossom",
+        "Satin Ribbon Bow",
         "Flower Wreath",
-        "Coral Pearl Hairpin",
-        "Pink Ribbon Bow",
         "Cute Cat Ears",
         "Fluffy Bunny Ears",
         "Wizard Star Hat",
-        "Glow Headphones",
-        "Space Visor Halo",
+        "3D Headphones",
+        "Pearl Hairclips",
     )
 
     val wingsAndBack = listOf(
         "None",
-        "Fairy Butterfly Wings",
         "Feathered Pegasus Wings",
-        "Crystal Ice Wings",
+        "Butterfly Fairy Wings",
+        "Frost Crystal Wings",
+        "Golden Angel Wings",
         "Royal Velvet Cape",
-        "Shimmer Frost Cape",
-        "Cute Backpack",
-        "Star Jetpack",
+        "Shimmer Ice Cape",
+        "Starry Cape",
     )
 
     val handAndFaceProps = listOf(
         "None",
-        "Magic Star Wand",
-        "Crystal Ice Wand",
-        "Royal Gem Scepter",
-        "Pop Star Mic",
+        "3D Magic Star Wand",
+        "Snowflake Ice Wand",
+        "Royal Heart Scepter",
+        "Cool 3D Sunglasses",
         "Round Glasses",
         "Pink Heart Shades",
-        "Gold Star Shades",
+        "Sparkle Aura",
     )
 
-    val pets = listOf(
-        "None",
-        "Arctic Snow Fox",
-        "Winged Unicorn",
-        "Baby Crystal Dragon",
-        "Golden Puppy",
-        "Fluffy Kitten",
-        "Coral Seahorse",
-        "Playful Dolphin",
-        "Cuddly Bunny",
-        "Baby Panda",
-        "Snowy Owl",
-        "Rainbow Butterfly",
-        "Friendly Mini Robot",
+    // 16 High-Resolution 3D-Shaded Companion Pets (`assets/puppet/pets/<slug>.webp`)
+    val petEntries = listOf(
+        "None" to "",
+        "Winged Baby Unicorn" to "puppet/pets/winged_unicorn.webp",
+        "Golden Puppy" to "puppet/pets/golden_puppy.webp",
+        "Royal Poodle" to "puppet/pets/royal_poodle.webp",
+        "Tabby Kitten" to "puppet/pets/tabby_kitten.webp",
+        "Fluffy Bunny" to "puppet/pets/fluffy_bunny.webp",
+        "Emerald Dragon" to "puppet/pets/emerald_dragon.webp",
+        "Baby Arctic Seal" to "puppet/pets/arctic_seal.webp",
+        "Lagoon Dolphin" to "puppet/pets/lagoon_dolphin.webp",
+        "Friendly Sea Turtle" to "puppet/pets/sea_turtle.webp",
+        "Royal White Swan" to "puppet/pets/royal_swan.webp",
+        "Pink Flamingo" to "puppet/pets/pink_flamingo.webp",
+        "Snowy Owl" to "puppet/pets/snowy_owl.webp",
+        "Chubby Baby Panda" to "puppet/pets/baby_panda.webp",
+        "Cuddly Koala" to "puppet/pets/cuddly_koala.webp",
+        "Cute Hamster" to "puppet/pets/cute_hamster.webp",
+        "Star Companion Bot" to "puppet/pets/star_robot.webp",
     )
 }
 
@@ -221,12 +225,12 @@ fun AvatarCustomizationDialog(
     var activeCategoryTab by remember { mutableIntStateOf(0) }
 
     val studioTabs = listOf(
-        "Face & Eyes",
-        "Hair",
+        "Pets (16)",
         "Outfits",
+        "Hair",
+        "Face & Eyes",
         "Crowns & Wings",
         "Wands & Shades",
-        "3D Pets",
         "World",
     )
 
@@ -260,7 +264,7 @@ fun AvatarCustomizationDialog(
                     .padding(18.dp),
                 horizontalArrangement = Arrangement.spacedBy(18.dp),
             ) {
-                // Left Pane: Live 360° Sculpted 3D Character + Pet Turntable Stage!
+                // Left Pane: Live 2.5D Storybook Character + 3D Pet Stage!
                 Column(
                     modifier = Modifier
                         .weight(0.44f)
@@ -268,13 +272,13 @@ fun AvatarCustomizationDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "3D Character & Pet Studio",
+                        text = "Character & Pet Studio",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.ExtraBold,
                         color = Color(0xFF2B194D),
                     )
                     Text(
-                        text = "Swipe left/right to spin 360° • Tap to jump!",
+                        text = "Swipe to tilt 2.5D • Tap to jump & sparkle!",
                         style = MaterialTheme.typography.labelMedium,
                         color = Color(0xFF6E5B9A),
                     )
@@ -314,7 +318,7 @@ fun AvatarCustomizationDialog(
                     )
                 }
 
-                // Right Pane: Categorized Tabs with Deep Customization!
+                // Right Pane: Categorized Customization Tabs
                 Column(
                     modifier = Modifier
                         .weight(0.56f)
@@ -344,8 +348,49 @@ fun AvatarCustomizationDialog(
                         verticalArrangement = Arrangement.spacedBy(14.dp),
                     ) {
                         when (activeCategoryTab) {
-                            0 -> { // Face & Eyes
-                                SectionTitle("Skin Tone (${AvatarCatalog.skinTones.size} tones)")
+                            0 -> { // 16 3D Pets!
+                                SectionTitle("Choose Your 3D Sidekick Pet (${AvatarCatalog.petEntries.size - 1} pets!)")
+                                ChoiceChips(
+                                    options = AvatarCatalog.petEntries.map { it.first },
+                                    selectedIndex = draft.petIndex.coerceIn(0, AvatarCatalog.petEntries.lastIndex),
+                                    onSelect = { draft = draft.copy(petIndex = it) },
+                                )
+                            }
+                            1 -> { // Outfits & Dyes
+                                SectionTitle("Storybook Dress & Outfit (${AvatarCatalog.outfits.size} styles)")
+                                ChoiceChips(
+                                    options = AvatarCatalog.outfits.map { it.first },
+                                    selectedIndex = draft.outfitIndex,
+                                    onSelect = { draft = draft.copy(outfitIndex = it) },
+                                )
+                                SectionTitle("Outfit Color Dye")
+                                ChoiceChips(
+                                    options = AvatarCatalog.outfitColorOverrides.map { it.first },
+                                    selectedIndex = draft.outfitColorIndex,
+                                    onSelect = { draft = draft.copy(outfitColorIndex = it) },
+                                )
+                            }
+                            2 -> { // Hair
+                                SectionTitle("Hairstyle (${AvatarCatalog.hairStyles.size} styles)")
+                                ChoiceChips(
+                                    options = AvatarCatalog.hairStyles,
+                                    selectedIndex = draft.hairStyleIndex,
+                                    onSelect = { draft = draft.copy(hairStyleIndex = it) },
+                                )
+                                SectionTitle("Hair Color (${AvatarCatalog.hairColors.size} shades)")
+                                ColorSwatchRow(
+                                    colors = AvatarCatalog.hairColors.map { it.second },
+                                    selectedIndex = draft.hairColorIndex,
+                                    onSelect = { draft = draft.copy(hairColorIndex = it) },
+                                )
+                                ChoiceChips(
+                                    options = AvatarCatalog.hairColors.map { it.first },
+                                    selectedIndex = draft.hairColorIndex,
+                                    onSelect = { draft = draft.copy(hairColorIndex = it) },
+                                )
+                            }
+                            3 -> { // Face & Eyes
+                                SectionTitle("Skin Tone")
                                 ColorSwatchRow(
                                     colors = AvatarCatalog.skinTones,
                                     selectedIndex = draft.skinToneIndex,
@@ -369,77 +414,31 @@ fun AvatarCustomizationDialog(
                                     selectedIndex = draft.eyeColorIndex,
                                     onSelect = { draft = draft.copy(eyeColorIndex = it) },
                                 )
-                                ChoiceChips(
-                                    options = AvatarCatalog.eyeColors.map { it.first },
-                                    selectedIndex = draft.eyeColorIndex,
-                                    onSelect = { draft = draft.copy(eyeColorIndex = it) },
-                                )
                             }
-                            1 -> { // Hair
-                                SectionTitle("Sculpted 3D Hairstyle (${AvatarCatalog.hairStyles.size} styles)")
-                                ChoiceChips(
-                                    options = AvatarCatalog.hairStyles,
-                                    selectedIndex = draft.hairStyleIndex,
-                                    onSelect = { draft = draft.copy(hairStyleIndex = it) },
-                                )
-                                SectionTitle("Hair Color (${AvatarCatalog.hairColors.size} shades)")
-                                ColorSwatchRow(
-                                    colors = AvatarCatalog.hairColors.map { it.second },
-                                    selectedIndex = draft.hairColorIndex,
-                                    onSelect = { draft = draft.copy(hairColorIndex = it) },
-                                )
-                                ChoiceChips(
-                                    options = AvatarCatalog.hairColors.map { it.first },
-                                    selectedIndex = draft.hairColorIndex,
-                                    onSelect = { draft = draft.copy(hairColorIndex = it) },
-                                )
-                            }
-                            2 -> { // Outfits & Dress Dyes
-                                SectionTitle("3D Outfit & Dress Style (${AvatarCatalog.outfits.size} outfits)")
-                                ChoiceChips(
-                                    options = AvatarCatalog.outfits.map { it.first },
-                                    selectedIndex = draft.outfitIndex,
-                                    onSelect = { draft = draft.copy(outfitIndex = it) },
-                                )
-                                SectionTitle("Outfit Color Dye")
-                                ChoiceChips(
-                                    options = AvatarCatalog.outfitColorOverrides.map { it.first },
-                                    selectedIndex = draft.outfitColorIndex,
-                                    onSelect = { draft = draft.copy(outfitColorIndex = it) },
-                                )
-                            }
-                            3 -> { // Crowns, Horns & Wings
-                                SectionTitle("Crowns, Horns & Headwear (${AvatarCatalog.accessories.size} items)")
+                            4 -> { // Crowns & Wings
+                                SectionTitle("Crowns, Horns & Headwear")
                                 ChoiceChips(
                                     options = AvatarCatalog.accessories,
                                     selectedIndex = draft.accessoryIndex,
                                     onSelect = { draft = draft.copy(accessoryIndex = it) },
                                 )
-                                SectionTitle("3D Animated Wings, Capes & Backpacks")
+                                SectionTitle("Animated 3D Wings & Capes")
                                 ChoiceChips(
                                     options = AvatarCatalog.wingsAndBack,
                                     selectedIndex = draft.wingsBackIndex,
                                     onSelect = { draft = draft.copy(wingsBackIndex = it) },
                                 )
                             }
-                            4 -> { // Wands & Shades
-                                SectionTitle("Held Magic Wands, Scepters & Glasses")
+                            5 -> { // Wands & Shades
+                                SectionTitle("Magic Wands, Sunglasses & Sparkles")
                                 ChoiceChips(
                                     options = AvatarCatalog.handAndFaceProps,
                                     selectedIndex = draft.handFacePropIndex,
                                     onSelect = { draft = draft.copy(handFacePropIndex = it) },
                                 )
                             }
-                            5 -> { // 3D Pets
-                                SectionTitle("Choose Your 3D Sidekick Pet (${AvatarCatalog.pets.size - 1} pets!)")
-                                ChoiceChips(
-                                    options = AvatarCatalog.pets,
-                                    selectedIndex = draft.petIndex,
-                                    onSelect = { draft = draft.copy(petIndex = it) },
-                                )
-                            }
                             6 -> { // Theme World
-                                SectionTitle("Choose Your Theme World")
+                                SectionTitle("Choose Your Living Theme World")
                                 FlowRow(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -469,7 +468,7 @@ fun AvatarCustomizationDialog(
                             onClick = { onSave(draft, chosenSkin) },
                             shape = RoundedCornerShape(20.dp),
                         ) {
-                            Text("Save My 3D Look!", fontWeight = FontWeight.ExtraBold)
+                            Text("Save My Look!", fontWeight = FontWeight.ExtraBold)
                         }
                     }
                 }
