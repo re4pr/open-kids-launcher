@@ -1,11 +1,14 @@
 package io.github.re4pr.kidslauncher
 
 import io.github.re4pr.kidslauncher.data.AppCatalogService
+import io.github.re4pr.kidslauncher.guard.KidGuardController
 import io.github.re4pr.kidslauncher.model.AppCategory
 import io.github.re4pr.kidslauncher.model.ContentPluginConfig
 import io.github.re4pr.kidslauncher.model.LauncherMode
+import io.github.re4pr.kidslauncher.model.LauncherSettings
 import io.github.re4pr.kidslauncher.model.LauncherTab
 import io.github.re4pr.kidslauncher.model.LocalRestrictionConfig
+import io.github.re4pr.kidslauncher.model.ManagedAppRule
 import io.github.re4pr.kidslauncher.model.TimeWindowRule
 import io.github.re4pr.kidslauncher.plugin.PluginEngine
 import io.github.re4pr.kidslauncher.provider.HomeAssistantControlProvider
@@ -181,5 +184,76 @@ class LauncherCoreUnitTest {
                 vpnPackages = emptySet(),
             )
         )
+    }
+
+    @Test
+    fun kidGuardController_blocksSettingsAndOtherLaunchersUnlessAdminBypassActive() {
+        KidGuardController.clearAdminExitBypass()
+        val settings = LauncherSettings(
+            appRules = mapOf(
+                "com.example.game" to ManagedAppRule("com.example.game", category = AppCategory.GAMES, allowed = true),
+                "com.example.audio" to ManagedAppRule("com.example.audio", category = AppCategory.AUDIO, allowed = true, allowedInBedtime = true),
+            ),
+            localRestrictions = LocalRestrictionConfig(strictLauncherLockEnabled = true),
+        )
+        val allowed = setOf("com.example.game", "com.example.audio")
+
+        assertFalse(
+            KidGuardController.isPackagePermittedInForeground(
+                selfPackage = "io.github.re4pr.kidslauncher",
+                foregroundPackage = "com.android.settings",
+                settings = settings,
+                activeMode = LauncherMode.FREE_PLAY,
+                allowedKidPackages = allowed,
+            )
+        )
+        assertFalse(
+            KidGuardController.isPackagePermittedInForeground(
+                selfPackage = "io.github.re4pr.kidslauncher",
+                foregroundPackage = "com.sec.android.app.launcher",
+                settings = settings,
+                activeMode = LauncherMode.FREE_PLAY,
+                allowedKidPackages = allowed,
+            )
+        )
+        assertTrue(
+            KidGuardController.isPackagePermittedInForeground(
+                selfPackage = "io.github.re4pr.kidslauncher",
+                foregroundPackage = "com.example.game",
+                settings = settings,
+                activeMode = LauncherMode.FREE_PLAY,
+                allowedKidPackages = allowed,
+            )
+        )
+        assertFalse(
+            KidGuardController.isPackagePermittedInForeground(
+                selfPackage = "io.github.re4pr.kidslauncher",
+                foregroundPackage = "com.example.game",
+                settings = settings,
+                activeMode = LauncherMode.BEDTIME,
+                allowedKidPackages = allowed,
+            )
+        )
+        assertTrue(
+            KidGuardController.isPackagePermittedInForeground(
+                selfPackage = "io.github.re4pr.kidslauncher",
+                foregroundPackage = "com.example.audio",
+                settings = settings,
+                activeMode = LauncherMode.BEDTIME,
+                allowedKidPackages = allowed,
+            )
+        )
+
+        KidGuardController.grantTemporaryAdminExit(60_000L)
+        assertTrue(
+            KidGuardController.isPackagePermittedInForeground(
+                selfPackage = "io.github.re4pr.kidslauncher",
+                foregroundPackage = "com.android.settings",
+                settings = settings,
+                activeMode = LauncherMode.FREE_PLAY,
+                allowedKidPackages = allowed,
+            )
+        )
+        KidGuardController.clearAdminExitBypass()
     }
 }

@@ -167,6 +167,8 @@ fun ParentControlCenterDialog(
     onRemoveCustomSkin: (String) -> Unit,
     onRefreshPlugins: () -> Unit,
     onOpenFamilyLinkSystemSettings: () -> Unit,
+    onSwitchDefaultHomeApp: () -> Unit,
+    onExitToSystemLauncher: () -> Unit,
     onClose: () -> Unit,
 ) {
     var selectedSection by remember { mutableIntStateOf(0) }
@@ -240,6 +242,8 @@ fun ParentControlCenterDialog(
                             onAddBonusMinutes = onAddBonusMinutes,
                             onResetTodayUsage = onResetTodayUsage,
                             onChangePasscode = onChangePasscode,
+                            onSwitchDefaultHomeApp = onSwitchDefaultHomeApp,
+                            onExitToSystemLauncher = onExitToSystemLauncher,
                         )
                         1 -> AppsManagementTab(
                             settings = settings,
@@ -282,6 +286,8 @@ private fun TimingsAndModesTab(
     onAddBonusMinutes: (Int) -> Unit,
     onResetTodayUsage: () -> Unit,
     onChangePasscode: (String) -> Unit,
+    onSwitchDefaultHomeApp: () -> Unit,
+    onExitToSystemLauncher: () -> Unit,
 ) {
     val context = LocalContext.current
     val local = settings.localRestrictions
@@ -462,25 +468,68 @@ private fun TimingsAndModesTab(
 
         HorizontalDivider()
 
-        Text("Launcher & Security", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            OutlinedButton(
-                onClick = {
-                    runCatching {
-                        context.startActivity(Intent(Settings.ACTION_HOME_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        Text("Launcher Kiosk Lock & Admin Exit", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        val isHomeDefault = remember { io.github.re4pr.kidslauncher.guard.KidGuardController.isDefaultHomeApp(context) }
+        val hasUsageStats = remember { io.github.re4pr.kidslauncher.guard.KidGuardController.hasUsageStatsPermission(context) }
+        val hasOverlay = remember { io.github.re4pr.kidslauncher.guard.KidGuardController.canDrawOverlays(context) }
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Switch(
+                checked = local.strictLauncherLockEnabled,
+                onCheckedChange = { enabled ->
+                    if (!enabled) {
+                        io.github.re4pr.kidslauncher.guard.KidGuardController.grantTemporaryAdminExit(120_000L)
+                    } else {
+                        io.github.re4pr.kidslauncher.guard.KidGuardController.clearAdminExitBypass()
                     }
-                }
-            ) {
-                Text("Choose Default Home App")
+                    onUpdateSettings {
+                        it.copy(localRestrictions = it.localRestrictions.copy(strictLauncherLockEnabled = enabled))
+                    }
+                },
+            )
+            Column {
+                Text("Strict Kid Lock (Block switching apps & Settings)", fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = "Home Default: ${if (isHomeDefault) "Active" else "Not Set"} • Usage Guard: ${if (hasUsageStats) "Ready" else "Needs Access"} • Overlay: ${if (hasOverlay) "Ready" else "Needs Access"}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
-            OutlinedButton(
-                onClick = {
-                    runCatching {
-                        context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = onSwitchDefaultHomeApp) {
+                Text("Switch Default Home App (Admin)")
+            }
+            OutlinedButton(onClick = onExitToSystemLauncher) {
+                Text("Exit to System Launcher (2m)")
+            }
+            if (!hasUsageStats) {
+                OutlinedButton(
+                    onClick = {
+                        io.github.re4pr.kidslauncher.guard.KidGuardController.grantTemporaryAdminExit(120_000L)
+                        runCatching {
+                            context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                        }
                     }
+                ) {
+                    Text("Grant Usage Access")
                 }
-            ) {
-                Text("Grant Usage Stats (Optional)")
+            }
+            if (!hasOverlay) {
+                OutlinedButton(
+                    onClick = {
+                        io.github.re4pr.kidslauncher.guard.KidGuardController.grantTemporaryAdminExit(120_000L)
+                        runCatching {
+                            context.startActivity(
+                                Intent(
+                                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    android.net.Uri.parse("package:${context.packageName}"),
+                                ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            )
+                        }
+                    }
+                ) {
+                    Text("Grant Display Over Apps")
+                }
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {

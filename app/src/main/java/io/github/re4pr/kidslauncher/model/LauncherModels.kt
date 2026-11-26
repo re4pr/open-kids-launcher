@@ -125,6 +125,7 @@ data class LocalRestrictionConfig(
     ),
     val tidyUpEndsAtEpochMs: Long = 0L,
     val allowBedtimeAudio: Boolean = true,
+    val strictLauncherLockEnabled: Boolean = true,
 )
 
 @Serializable
