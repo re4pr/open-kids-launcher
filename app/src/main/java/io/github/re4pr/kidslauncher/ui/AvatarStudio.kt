@@ -73,7 +73,7 @@ object AvatarCatalog {
     )
 
     val eyeStyles = listOf(
-        "Disney Lash",
+        "Storybook Lash",
         "Big Sparkle",
         "Happy Smile",
         "Playful Wink",
@@ -94,7 +94,7 @@ object AvatarCatalog {
 
     val hairStyles = listOf(
         "Flowing Princess Waves",
-        "Thick Elsa Side Braid",
+        "Frost Queen Side Braid",
         "Twin Ribbon Braids",
         "High Bouncy Ponytail",
         "Twin Pigtails",
@@ -108,17 +108,17 @@ object AvatarCatalog {
     )
 
     val hairColors = listOf(
-        "Warm Chestnut" to Color(0xFF613A24),
+        "Pearl Blonde" to Color(0xFFF5EBDC),
         "Honey Blonde" to Color(0xFFEBBF52),
-        "Platinum Ice" to Color(0xFFE4F4FF),
-        "Midnight Black" to Color(0xFF232638),
-        "Auburn Copper" to Color(0xFFB34726),
+        "Warm Chestnut" to Color(0xFF7A4B2E),
+        "Platinum Ice" to Color(0xFFDDF2FF),
+        "Midnight Black" to Color(0xFF2B2E42),
+        "Auburn Copper" to Color(0xFFC45530),
         "Unicorn Pink" to Color(0xFFFF66B3),
         "Cotton Candy" to Color(0xFFFFA3DC),
-        "Royal Lavender" to Color(0xFF9E78FF),
-        "Mermaid Teal" to Color(0xFF10C8B8),
-        "Sky Blue" to Color(0xFF42AEFF),
-        "Mint Sorbet" to Color(0xFF55E6B5),
+        "Royal Lavender" to Color(0xFFA682FF),
+        "Mermaid Teal" to Color(0xFF18D2C0),
+        "Sky Blue" to Color(0xFF4DB4FF),
         "Strawberry Coral" to Color(0xFFFF6B7A),
     )
 

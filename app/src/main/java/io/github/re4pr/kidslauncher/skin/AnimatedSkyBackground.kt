@@ -207,14 +207,16 @@ fun AnimatedSkyBackground(
             )
         }
 
-        // 2. Rich In-World Living Scene Layer (Aurora, Waterfall, Sky Lanterns, Swimming Fish, Butterflies, Shooting Stars!)
+        // 2. Ambient World Overlay (Full Canvas scene life when static image only; clean contrast vignette when live MP4 video is active!)
         Canvas(modifier = Modifier.fillMaxSize()) {
-            when (palette.particleStyle) {
-                ParticleStyle.SNOWFLAKES -> drawFrostKingdomLife(timeSec)
-                ParticleStyle.RAINBOW_SPARKLES -> drawRainbowUnicornLife(timeSec, butterflyBmp)
-                ParticleStyle.CROWNS_AND_HEARTS -> drawRoyalPrincessLife(timeSec)
-                ParticleStyle.OCEAN_BUBBLES -> drawOceanMermaidLife(timeSec)
-                ParticleStyle.STARLIGHT -> drawBedtimeDreamLife(timeSec)
+            if (activeVideoUri == null) {
+                when (palette.particleStyle) {
+                    ParticleStyle.SNOWFLAKES -> drawFrostKingdomLife(timeSec)
+                    ParticleStyle.RAINBOW_SPARKLES -> drawRainbowUnicornLife(timeSec, butterflyBmp)
+                    ParticleStyle.CROWNS_AND_HEARTS -> drawRoyalPrincessLife(timeSec)
+                    ParticleStyle.OCEAN_BUBBLES -> drawOceanMermaidLife(timeSec)
+                    ParticleStyle.STARLIGHT -> drawBedtimeDreamLife(timeSec)
+                }
             }
 
             // Subtle contrast vignette for crisp readability
@@ -222,7 +224,7 @@ fun AnimatedSkyBackground(
                 brush = Brush.verticalGradient(
                     0.0f to Color.Black.copy(alpha = 0.14f),
                     0.34f to Color.Transparent,
-                    1.0f to palette.skyTop.copy(alpha = 0.40f),
+                    1.0f to palette.skyTop.copy(alpha = 0.36f),
                 )
             )
         }

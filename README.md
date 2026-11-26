@@ -20,16 +20,16 @@ Unlike closed commercial kids launchers, Open Kids Launcher contains **zero ads,
 - **Books Menu:** Welcoming empty bookshelf out of the box, backed by a pluggable `BookServiceProvider` / JSON book connector ready whenever you add reader apps or book services.
 - **Audio Menu:** Dedicated space for kid-safe music and story players plus optional audio shelf feeds.
 
-### 2. Google Kids Space–Inspired 2.5D Storybook Puppet & 16 3D-Shaded Pets
-- Uses a **2.5D airbrushed skeletal puppet rig** paired with high-resolution 3D-shaded props and companion pets—matching the 2.5D layered puppet approach used by Google Kids Space.
+### 2. Google Kids Space–Inspired 2.5D Studio Character Rig & 16 Plush 3D Pets
+- Uses a **2.5D studio-rendered 3D character rig** paired with articulated 3D hairstyles, real closed-lash 3D blinking, royal 3D props, and 16 plush 3D companion pets—matching the 2.5D layered puppet approach used by Google Kids Space.
 - Kids can **swipe horizontally for 2.5D parallax tilt**, **tap to jump & sparkle**, or tap **Dress Up** to customize across 7 categories:
-  - **16 3D-Shaded Sidekick Pets:** Winged Baby Unicorn, Golden Puppy, Royal Poodle, Tabby Kitten, Fluffy Bunny, Emerald Dragon, Baby Arctic Seal, Lagoon Dolphin, Sea Turtle, Royal Swan, Pink Flamingo, Snowy Owl, Baby Panda, Cuddly Koala, Cute Hamster, and Star Companion Bot.
-  - **Storybook Dresses & Outfits:** 12 illustrated silhouettes (Frost Crystal Gown, Princess Rose Ballgown, Unicorn Rainbow Tulle, Mermaid Pearl Fin Gown, Fairy Blossom Dress, Ballerina Tutu, Star Hoodie & Jeans, Overalls, School Blazer, Astronaut Suit, Pajamas) + 10 color dyes.
-  - **Layered Hairstyles:** 12 multi-layered hairstyles (Flowing Waves, Thick Elsa Side Braid, Twin Braids, High Ponytail, Pigtails, Cloud Curls, Space Buns, Bob, Crown Braid) in 12 shades.
-  - **Face, Eyes, Crowns & Animated Wings:** 8 skin tones, rosy blush/freckles/star cheeks, 6 Disney-lash eye styles in 8 iris colors, 3D crowns/unicorn horns/bows/headphones, flapping 3D feathered Pegasus & butterfly fairy wings, and 3D magic wands.
+  - **16 Plush 3D Sidekick Pets:** Winged Baby Unicorn, Golden Puppy, Royal Poodle, Tabby Kitten, Fluffy Bunny, Emerald Dragon, Baby Arctic Seal, Lagoon Dolphin, Sea Turtle, Royal Swan, Pink Flamingo, Snowy Owl, Baby Panda, Cuddly Koala, Cute Hamster, and Star Companion Bot.
+  - **3D Storybook Dresses & Outfits:** 12 full-body 3D outfits (Frost Crystal Gown, Princess Rose Ballgown, Unicorn Rainbow Tulle, Mermaid Pearl Fin Gown, Fairy Blossom Dress, Ballerina Tutu, Star Hoodie & Jeans, Superhero Suit, Overalls, School Blazer, Astronaut Suit, Starlight Pajamas) + 10 luminance-preserving color dyes.
+  - **Articulated 3D Hairstyles:** Multi-style 3D hair portraits (Flowing Waves, Frost Side Braid, Twin Braids, High Ponytail, Pigtails, Cloud Curls, Space Buns) in 12 shades.
+  - **Face, Eyes, Crowns & Animated Wings:** Cheek stickers/freckles, iris color glazes, 3D jewelled crowns, golden unicorn horns, crystal frost tiaras, satin bows, headphones, flapping 3D feathered Pegasus & butterfly fairy wings, and 3D star magic wands.
 
-### 3. Living Storybook Worlds (Rock-Steady Landscapes + In-World Animations)
-Ships with five high-resolution 3D storybook worlds (`assets/scenes/*.jpg`) kept 100% camera-steady while rich in-world animations bring each kingdom to life (cascading waterfall & fluttering 3D butterflies in *Rainbow Unicorn*, rising golden sky lanterns & fountain spray in *Royal Princess*, waving Aurora Borealis & falling snow in *Frost Kingdom*, swimming coral fish & rising bubbles in *Ocean Mermaid*, and shooting stars & fireflies in *Bedtime*)—plus `ExoPlayer` `.mp4` / `.webm` custom skin support!
+### 3. True Seamless Looping `720p` `.mp4` Live Worlds (100% Locked Tripod Camera)
+Ships with five hardware-decoded, 100% camera-steady seamless looping `720p` `.mp4` live worlds (`assets/videos/*.mp4`) paired with high-res static fallbacks (`assets/scenes/*.jpg`) via `ExoPlayer`: cascading waterfalls & winged unicorns in *Rainbow Unicorn*, rising golden sky lanterns & fountain arcs in *Royal Princess*, waving Aurora Borealis & falling snow in *Frost Kingdom*, swimming reef fish & sunbeams in *Ocean Mermaid*, and a blinking crescent moon & fireflies in *Bedtime Kingdom*—with zero annoying camera movement!
 - **`Playtime (FREE_PLAY)`:** Vibrant theme sky, drifting particles, all approved menus active.
 - **`School & Study Time (SCHOOL_TIME)`:** Calm study atmosphere; Games & Videos hide while Books & approved learning apps stay accessible.
 - **`Tidy-Up Time (TIDY_UP)`:** Energetic Tidy-Up countdown banner that pauses games & shows until tidy-up finishes.
