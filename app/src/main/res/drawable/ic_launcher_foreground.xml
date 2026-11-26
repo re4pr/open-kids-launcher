@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Friendly star house icon -->
+    <path
+        android:fillColor="#FFE066"
+        android:pathData="M54,24 L61,39 L77,41 L65,52 L68,68 L54,60 L40,68 L43,52 L31,41 L47,39 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,62 C36,54 72,54 72,62 L72,78 C72,81 69,84 66,84 L42,84 C39,84 36,81 36,78 Z" />
+    <path
+        android:fillColor="#FF6B9D"
+        android:pathData="M48,70 C48,67 60,67 60,70 L60,84 L48,84 Z" />
+</vector>

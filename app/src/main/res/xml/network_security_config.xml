@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Permits user-configured local LAN HTTP endpoints (such as http://homeassistant.local:8123
+  or self-hosted LAN media servers) at runtime without requiring an APK rebuild.
+  Remote connections should always use HTTPS/WSS.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

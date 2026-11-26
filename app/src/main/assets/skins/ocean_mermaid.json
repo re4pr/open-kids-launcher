@@ -1,0 +1,16 @@
+{
+  "id": "ocean_mermaid",
+  "name": "Ocean Mermaid",
+  "tagline": "Coral lagoons, shimmering pearls & bubbles",
+  "skyTopHex": "#004D61",
+  "skyMidHex": "#0097A7",
+  "skyBottomHex": "#B2F7EF",
+  "surfaceCardHex": "#ECFFFD",
+  "accentPrimaryHex": "#00838F",
+  "accentSecondaryHex": "#FF7F6B",
+  "badgeHighlightHex": "#26C6DA",
+  "textPrimaryHex": "#05323D",
+  "textOnSkyHex": "#FFFFFF",
+  "particleStyle": "OCEAN_BUBBLES",
+  "cardCornerDp": 28
+}

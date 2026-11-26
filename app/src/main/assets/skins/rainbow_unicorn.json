@@ -1,0 +1,16 @@
+{
+  "id": "rainbow_unicorn",
+  "name": "Rainbow Unicorn",
+  "tagline": "Pastel clouds, rainbows & starlight",
+  "skyTopHex": "#6B3FA0",
+  "skyMidHex": "#C86DD7",
+  "skyBottomHex": "#FFE3F7",
+  "surfaceCardHex": "#FFF5FD",
+  "accentPrimaryHex": "#B833FF",
+  "accentSecondaryHex": "#4CE0B3",
+  "badgeHighlightHex": "#FF6EC7",
+  "textPrimaryHex": "#371857",
+  "textOnSkyHex": "#FFFFFF",
+  "particleStyle": "RAINBOW_SPARKLES",
+  "cardCornerDp": 32
+}
