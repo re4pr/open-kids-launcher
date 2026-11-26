@@ -91,13 +91,14 @@ fun Avatar3DStage(
 ) {
     val context = LocalContext.current
     var parallaxTilt by remember { mutableFloatStateOf(0f) }
-    var cheerStartMs by remember { mutableLongStateOf(0L) }
-    var nowMs by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var cheerStartSec by remember { mutableFloatStateOf(-10f) }
+    val startNs = remember { System.nanoTime() }
+    var elapsedSec by remember { mutableFloatStateOf(0f) }
 
     LaunchedEffect(Unit) {
         while (true) {
-            withFrameNanos {
-                nowMs = System.currentTimeMillis()
+            withFrameNanos { frameNs ->
+                elapsedSec = ((frameNs - startNs) / 1_000_000_000.0).toFloat()
             }
         }
     }
@@ -108,25 +109,9 @@ fun Avatar3DStage(
         label = "parallax25D",
     )
 
-    val infinite = rememberInfiniteTransition(label = "puppet25D")
-    val breath by infinite.animateFloat(
-        initialValue = -1f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2_200, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "breath",
-    )
-    val wavePhase by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = (2.0 * PI).toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2_600, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "wave",
-    )
+    // Continuous C-infinity sine signals driven by monotonic elapsedSec — ZERO loop resets or snaps!
+    val breath = sin(elapsedSec * 2.4f)
+    val wavePhase = elapsedSec * 2.4f
 
     // Preload 3D-shaded sprite overlays & selected 3D companion pet
     val petPath = AvatarCatalog.petEntries.getOrElse(avatar.petIndex) { AvatarCatalog.petEntries[0] }.second
@@ -169,7 +154,7 @@ fun Avatar3DStage(
             .pointerInput(onTapAvatar) {
                 detectTapGestures(
                     onTap = {
-                        cheerStartMs = System.currentTimeMillis()
+                        cheerStartSec = elapsedSec
                         onTapAvatar?.invoke()
                     }
                 )
@@ -178,7 +163,7 @@ fun Avatar3DStage(
         val w = size.width
         val h = size.height
         val unit = minOf(w, h)
-        val cheerElapsed = ((nowMs - cheerStartMs) / 1000f)
+        val cheerElapsed = elapsedSec - cheerStartSec
         val isCheering = cheerElapsed in 0f..0.95f
         val jumpOffset = if (isCheering) {
             -sin((cheerElapsed / 0.95f) * PI.toFloat()).coerceAtLeast(0f) * unit * 0.14f
@@ -293,7 +278,7 @@ fun Avatar3DStage(
                     skinBase = skinBase,
                     hairBase = hairBase,
                     irisBase = irisBase,
-                    nowMs = nowMs,
+                    nowMs = (elapsedSec * 1000f).toLong(),
                     parallax = smoothParallax,
                     sunglassesBmp = sunglassesBmp,
                 )
@@ -326,14 +311,16 @@ fun Avatar3DStage(
             }
         }
 
-        // 3. High-Resolution 3D-Shaded Sidekick Pet Stage!
+        // 3. High-Resolution 3D-Shaded Sidekick Pet Stage (Continuous C-infinity smooth motion, zero resets!)
         if (hasPet && petBitmap != null) {
             val petCx = w * 0.76f
             val isFloatingPet = avatar.petIndex in listOf(1, 6, 8, 9, 12)
+            val smoothFloat = sin(elapsedSec * 2.1f)
             val petBob = if (isFloatingPet) {
-                sin(wavePhase * 1.4f) * unit * 0.032f - unit * 0.05f
+                smoothFloat * unit * 0.026f - unit * 0.045f
             } else {
-                -kotlin.math.abs(sin(wavePhase * 1.3f)) * unit * 0.022f
+                // Smooth gentle breathing rise/settle with zero sharp cusps or resets
+                (smoothFloat - 1f) * 0.5f * unit * 0.016f
             }
             val petJump = if (isCheering) jumpOffset * 0.85f else 0f
             val petSize = unit * 0.40f
@@ -349,10 +336,11 @@ fun Avatar3DStage(
                 size = Size(petSize * 0.84f, 20f),
             )
 
-            // Squash-and-stretch breathing + playful tilt on the 3D-rendered pet!
-            val squashX = 1f + breath * 0.028f
-            val squashY = 1f - breath * 0.028f
-            val petTilt = sin(wavePhase * 1.1f) * 4.2f - smoothParallax * 5f
+            // Smooth squash-and-stretch breathing + gentle head-sway driven by monotonic elapsedSec!
+            val petBreath = sin(elapsedSec * 2.1f + 0.6f)
+            val squashX = 1f + petBreath * 0.022f
+            val squashY = 1f - petBreath * 0.022f
+            val petTilt = sin(elapsedSec * 1.45f) * 3.8f - smoothParallax * 5f
 
             withTransform({
                 translate(left = petCx, top = groundY + petBob + petJump - petSize * 0.46f)

@@ -28,8 +28,8 @@ Unlike closed commercial kids launchers, Open Kids Launcher contains **zero ads,
   - **Layered Hairstyles:** 12 multi-layered hairstyles (Flowing Waves, Thick Elsa Side Braid, Twin Braids, High Ponytail, Pigtails, Cloud Curls, Space Buns, Bob, Crown Braid) in 12 shades.
   - **Face, Eyes, Crowns & Animated Wings:** 8 skin tones, rosy blush/freckles/star cheeks, 6 Disney-lash eye styles in 8 iris colors, 3D crowns/unicorn horns/bows/headphones, flapping 3D feathered Pegasus & butterfly fairy wings, and 3D magic wands.
 
-### 3. Seamless Live Video Wallpaper Worlds (`ExoPlayer` H.264 `.mp4`)
-Ships with five enchanted 3D storybook worlds (`assets/videos/*.mp4` + `assets/scenes/*.jpg`) played as hardware-decoded, zero-CPU-overhead looping live video wallpapers (`Player.REPEAT_MODE_ONE`, automatically paused when backgrounded), plus custom `.mp4` / `.gif` / `.webp` skin support!
+### 3. Living Storybook Worlds (Rock-Steady Landscapes + In-World Animations)
+Ships with five high-resolution 3D storybook worlds (`assets/scenes/*.jpg`) kept 100% camera-steady while rich in-world animations bring each kingdom to life (cascading waterfall & fluttering 3D butterflies in *Rainbow Unicorn*, rising golden sky lanterns & fountain spray in *Royal Princess*, waving Aurora Borealis & falling snow in *Frost Kingdom*, swimming coral fish & rising bubbles in *Ocean Mermaid*, and shooting stars & fireflies in *Bedtime*)—plus `ExoPlayer` `.mp4` / `.webm` custom skin support!
 - **`Playtime (FREE_PLAY)`:** Vibrant theme sky, drifting particles, all approved menus active.
 - **`School & Study Time (SCHOOL_TIME)`:** Calm study atmosphere; Games & Videos hide while Books & approved learning apps stay accessible.
 - **`Tidy-Up Time (TIDY_UP)`:** Energetic Tidy-Up countdown banner that pauses games & shows until tidy-up finishes.

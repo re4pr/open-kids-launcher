@@ -3,7 +3,6 @@
   "name": "Ocean Mermaid",
   "tagline": "Bioluminescent pearl palace & coral lagoon",
   "sceneAssetPath": "scenes/ocean_mermaid.jpg",
-  "videoAssetPath": "videos/ocean_mermaid.mp4",
   "skyTopHex": "#004D61",
   "skyMidHex": "#0097A7",
   "skyBottomHex": "#B2F7EF",

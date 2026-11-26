@@ -109,7 +109,7 @@ object SkinThemeEngine {
                 displayName = label,
                 tagline = "Starlight bedtime kingdom",
                 sceneAssetPath = "scenes/bedtime_dream.jpg",
-                videoAssetPath = "videos/bedtime_dream.mp4",
+                videoAssetPath = "",
                 customSceneUri = "",
                 skyTop = Color(0xFF090D24),
                 skyMid = Color(0xFF18224B),
