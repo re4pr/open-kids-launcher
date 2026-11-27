@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.re4pr.kidslauncher.data.AppCatalogService
 import io.github.re4pr.kidslauncher.data.SettingsRepository
+import io.github.re4pr.kidslauncher.guard.KidGuardController
 import io.github.re4pr.kidslauncher.model.AppCategory
 import io.github.re4pr.kidslauncher.model.AvatarConfig
 import io.github.re4pr.kidslauncher.model.EffectivePolicyState
@@ -55,6 +56,8 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     val selectedTab: StateFlow<LauncherTab> = _selectedTab.asStateFlow()
 
     private val _tickEpochMs = MutableStateFlow(System.currentTimeMillis())
+    private val _usageStatsMinutesToday = MutableStateFlow<Int?>(null)
+    private var lastUsageStatsQueryMs: Long = 0L
     private var childAppLaunchedAtEpochMs: Long? = null
 
     val settings: StateFlow<LauncherSettings> = repository.settings
@@ -81,7 +84,10 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         familyLinkProvider.directive,
         _tickEpochMs,
     ) { cfg, localDir, haDir, flDir, nowMs ->
-        val usedMins = repository.getUsedSecondsToday() / 60
+        val localUsedMins = repository.getUsedSecondsToday() / 60
+        val osUsageMins = if (cfg.localRestrictions.syncUsageStatsScreenTime) _usageStatsMinutesToday.value else null
+        val usedMins = haDir.usedMinutesOverride ?: maxOf(localUsedMins, osUsageMins ?: 0)
+
         val baseBudget = haDir.dailyBudgetOverrideMinutes
             ?: cfg.localRestrictions.dailyScreenTimeBudgetMinutes
         val totalBudget = if (baseBudget > 0) baseBudget + cfg.localRestrictions.bonusMinutesToday else 0
@@ -93,7 +99,11 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
         val (mode, source) = PolicyResolver.resolveModePriority(directives)
         val allowedTabs = PolicyResolver.allowedTabsForMode(mode, cfg.localRestrictions.allowBedtimeAudio)
-        val tidyRemaining = ((cfg.localRestrictions.tidyUpEndsAtEpochMs - nowMs) / 1000L)
+        val effectiveTidyEndsAt = maxOf(
+            cfg.localRestrictions.tidyUpEndsAtEpochMs,
+            haDir.remoteTidyUpEndsAtEpochMs ?: 0L,
+        )
+        val tidyRemaining = ((effectiveTidyEndsAt - nowMs) / 1000L)
             .coerceAtLeast(0L)
             .toInt()
 
@@ -171,7 +181,14 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun evaluateSchedulesNow(cfg: LauncherSettings) {
-        val usedMins = repository.getUsedSecondsToday() / 60
+        val nowMs = System.currentTimeMillis()
+        if (cfg.localRestrictions.syncUsageStatsScreenTime && nowMs - lastUsageStatsQueryMs > 15_000L) {
+            lastUsageStatsQueryMs = nowMs
+            _usageStatsMinutesToday.value = KidGuardController.queryTodayTotalScreenTimeMinutes(getApplication())
+        }
+        val localUsedMins = repository.getUsedSecondsToday() / 60
+        val osUsageMins = if (cfg.localRestrictions.syncUsageStatsScreenTime) _usageStatsMinutesToday.value else null
+        val usedMins = haProvider.directive.value.usedMinutesOverride ?: maxOf(localUsedMins, osUsageMins ?: 0)
         val haBudget = haProvider.directive.value.dailyBudgetOverrideMinutes
         val baseBudget = haBudget ?: cfg.localRestrictions.dailyScreenTimeBudgetMinutes
         val effectiveBudget = if (baseBudget > 0) baseBudget + cfg.localRestrictions.bonusMinutesToday else 0

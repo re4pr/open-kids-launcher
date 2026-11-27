@@ -877,10 +877,28 @@ private fun HomeAssistantAndFamilyTab(
                 modifier = Modifier.weight(1f),
             )
             OutlinedTextField(
+                value = ha.tidyUpTimerEntityId,
+                onValueChange = { v -> onUpdateSettings { it.copy(homeAssistant = ha.copy(tidyUpTimerEntityId = v)) } },
+                label = { Text("Tidy-Up Timer Entity ID (timer.*)") },
+                placeholder = { Text("timer.kids_tablet_tidy_up") },
+                singleLine = true,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
                 value = ha.dailyBudgetEntityId,
                 onValueChange = { v -> onUpdateSettings { it.copy(homeAssistant = ha.copy(dailyBudgetEntityId = v)) } },
                 label = { Text("Daily Budget Minutes Entity ID") },
-                placeholder = { Text("input_number.kids_tablet_minutes") },
+                placeholder = { Text("input_number.kids_tablet_daily_minutes") },
+                singleLine = true,
+                modifier = Modifier.weight(1f),
+            )
+            OutlinedTextField(
+                value = ha.usedMinutesEntityId,
+                onValueChange = { v -> onUpdateSettings { it.copy(homeAssistant = ha.copy(usedMinutesEntityId = v)) } },
+                label = { Text("Used Screen Time Sensor (Family Link)") },
+                placeholder = { Text("sensor.family_link_daily_screen_time") },
                 singleLine = true,
                 modifier = Modifier.weight(1f),
             )

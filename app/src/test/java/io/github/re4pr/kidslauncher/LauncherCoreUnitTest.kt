@@ -110,6 +110,12 @@ class LauncherCoreUnitTest {
         assertEquals(LauncherMode.SCHOOL_TIME, HomeAssistantControlProvider.parseModeString("School Time"))
         assertEquals(LauncherMode.TIDY_UP, HomeAssistantControlProvider.parseModeString("tidy-up"))
         assertEquals(LauncherMode.BEDTIME, HomeAssistantControlProvider.parseModeString("sleep"))
+        assertEquals(null, HomeAssistantControlProvider.parseModeString("Auto"))
+        assertEquals(85, HomeAssistantControlProvider.parseMinutesString("1h 25m"))
+        assertEquals(90, HomeAssistantControlProvider.parseMinutesString("01:30:00"))
+        assertEquals(42, HomeAssistantControlProvider.parseMinutesString("42.0"))
+        assertEquals(null, HomeAssistantControlProvider.parseMinutesString("unavailable"))
+        assertTrue((HomeAssistantControlProvider.parseIsoEpochMs("2026-11-27T10:15:00+00:00") ?: 0L) > 0L)
     }
 
     @Test

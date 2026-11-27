@@ -17,6 +17,8 @@ data class ProviderDirective(
     val active: Boolean = true,
     val enforcedMode: LauncherMode? = null,
     val dailyBudgetOverrideMinutes: Int? = null,
+    val usedMinutesOverride: Int? = null,
+    val remoteTidyUpEndsAtEpochMs: Long? = null,
     val suspendedPackages: Set<String> = emptySet(),
     val statusConnected: Boolean = false,
     val statusDetail: String = "",

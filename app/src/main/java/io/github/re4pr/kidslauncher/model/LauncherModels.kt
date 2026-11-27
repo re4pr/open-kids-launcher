@@ -126,6 +126,7 @@ data class LocalRestrictionConfig(
     val tidyUpEndsAtEpochMs: Long = 0L,
     val allowBedtimeAudio: Boolean = true,
     val strictLauncherLockEnabled: Boolean = true,
+    val syncUsageStatsScreenTime: Boolean = true,
 )
 
 @Serializable
@@ -136,7 +137,9 @@ data class HomeAssistantConfig(
     val modeEntityId: String = "",        // e.g., input_select.kids_tablet_mode
     val lockSwitchEntityId: String = "",  // e.g., input_boolean.kids_tablet_lock
     val tidyUpSwitchEntityId: String = "",// e.g., input_boolean.kids_tablet_tidy_up
+    val tidyUpTimerEntityId: String = "", // e.g., timer.kids_tablet_tidy_up
     val dailyBudgetEntityId: String = "", // e.g., input_number.kids_tablet_daily_minutes
+    val usedMinutesEntityId: String = "", // e.g., sensor.family_link_daily_screen_time
     val publishEventsToHa: Boolean = true,
     val deviceIdentifier: String = "kids_tablet",
 )

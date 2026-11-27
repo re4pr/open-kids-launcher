@@ -47,6 +47,11 @@
                 android:name="android.app.property.SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Parental control foreground guard keeping the child inside approved apps and the kids launcher." />
         </service>
+
+        <receiver
+            android:name=".data.AdbProvisionReceiver"
+            android:exported="true"
+            android:permission="android.permission.WRITE_SECURE_SETTINGS" />
     </application>
 
 </manifest>

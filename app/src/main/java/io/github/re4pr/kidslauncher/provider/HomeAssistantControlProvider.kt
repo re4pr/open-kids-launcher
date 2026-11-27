@@ -2,6 +2,7 @@ package io.github.re4pr.kidslauncher.provider
 
 import io.github.re4pr.kidslauncher.model.HomeAssistantConfig
 import io.github.re4pr.kidslauncher.model.LauncherMode
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
@@ -204,14 +205,26 @@ class HomeAssistantControlProvider(
             ?.let { snapshot[it]?.get("state")?.jsonPrimitive?.content }
         val tidyState = cfg.tidyUpSwitchEntityId.trim().takeIf { it.isNotEmpty() }
             ?.let { snapshot[it]?.get("state")?.jsonPrimitive?.content }
+        val timerObj = cfg.tidyUpTimerEntityId.trim().takeIf { it.isNotEmpty() }
+            ?.let { snapshot[it] }
+        val timerState = timerObj?.get("state")?.jsonPrimitive?.content?.trim()?.lowercase()
+        val remoteTidyEndsAtMs: Long? = if (timerState == "active") {
+            val finishesAt = timerObj["attributes"]?.jsonObject?.get("finishes_at")?.jsonPrimitive?.content
+            parseIsoEpochMs(finishesAt)
+        } else {
+            null
+        }
         val modeState = cfg.modeEntityId.trim().takeIf { it.isNotEmpty() }
             ?.let { snapshot[it]?.get("state")?.jsonPrimitive?.content }
         val budgetMinutes = cfg.dailyBudgetEntityId.trim().takeIf { it.isNotEmpty() }
             ?.let { snapshot[it]?.get("state")?.jsonPrimitive?.content?.toDoubleOrNull()?.toInt() }
+        val usedMinutes = cfg.usedMinutesEntityId.trim().takeIf { it.isNotEmpty() }
+            ?.let { snapshot[it]?.get("state")?.jsonPrimitive?.content }
+            ?.let { parseMinutesString(it) }
 
         val resolvedMode: LauncherMode? = when {
             isTruthySwitch(lockState) -> LauncherMode.LOCKED
-            isTruthySwitch(tidyState) -> LauncherMode.TIDY_UP
+            timerState == "active" || isTruthySwitch(tidyState) -> LauncherMode.TIDY_UP
             modeState != null -> parseModeString(modeState)
             else -> null
         }
@@ -220,6 +233,8 @@ class HomeAssistantControlProvider(
             active = cfg.enabled,
             enforcedMode = resolvedMode,
             dailyBudgetOverrideMinutes = budgetMinutes,
+            usedMinutesOverride = usedMinutes,
+            remoteTidyUpEndsAtEpochMs = remoteTidyEndsAtMs,
             statusConnected = true,
             statusDetail = if (resolvedMode != null) {
                 "Connected • HA Mode: ${resolvedMode.title}"
@@ -270,6 +285,7 @@ class HomeAssistantControlProvider(
         fun parseModeString(raw: String): LauncherMode? {
             val norm = raw.trim().lowercase().replace('-', '_').replace(' ', '_')
             return when {
+                norm in setOf("auto", "schedule", "automatic", "none", "unknown", "unavailable") -> null
                 norm in setOf("free_play", "play", "playtime", "normal", "unlocked", "home") ->
                     LauncherMode.FREE_PLAY
                 norm in setOf("school", "school_time", "study", "homework", "learning") ->
@@ -282,6 +298,29 @@ class HomeAssistantControlProvider(
                     LauncherMode.LOCKED
                 else -> null
             }
+        }
+
+        fun parseIsoEpochMs(raw: String?): Long? {
+            val clean = raw?.trim()?.takeIf { it.isNotEmpty() && it != "null" } ?: return null
+            return runCatching { Instant.parse(clean).toEpochMilli() }.getOrNull()
+        }
+
+        fun parseMinutesString(raw: String?): Int? {
+            val clean = raw?.trim()?.lowercase() ?: return null
+            if (clean.isEmpty() || clean in setOf("unknown", "unavailable", "none", "null")) return null
+            clean.toDoubleOrNull()?.let { return it.toInt().coerceAtLeast(0) }
+            // Support "HH:MM:SS" or "H:MM"
+            val colonParts = clean.split(":")
+            if (colonParts.size in 2..3 && colonParts.all { it.toIntOrNull() != null }) {
+                val h = colonParts[0].toInt()
+                val m = colonParts[1].toInt()
+                return (h * 60 + m).coerceAtLeast(0)
+            }
+            // Support "1h 25m" / "45m"
+            val hMatch = Regex("(\\d+)\\s*h").find(clean)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+            val mMatch = Regex("(\\d+)\\s*m").find(clean)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+            if (hMatch > 0 || mMatch > 0) return hMatch * 60 + mMatch
+            return null
         }
 
         private fun isTruthySwitch(state: String?): Boolean =

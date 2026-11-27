@@ -106,6 +106,38 @@ object KidGuardController {
     }
 
     /**
+     * Sums today's foreground usage time across user/kid apps via Android UsageStatsManager
+     * (matching the same device-level counter used by Digital Wellbeing & Google Family Link).
+     */
+    fun queryTodayTotalScreenTimeMinutes(context: Context): Int? {
+        if (!hasUsageStatsPermission(context)) return null
+        val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager ?: return null
+        val zone = java.time.ZoneId.systemDefault()
+        val startOfDayMs = java.time.LocalDate.now(zone).atStartOfDay(zone).toInstant().toEpochMilli()
+        val nowMs = System.currentTimeMillis()
+        val stats = runCatching {
+            usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startOfDayMs, nowMs)
+        }.getOrNull() ?: return null
+
+        val excluded = essentialSystemPackages + setOf(
+            context.packageName,
+            "com.sec.android.app.launcher",
+            "com.google.android.apps.nexuslauncher",
+            "com.android.launcher3",
+            "com.android.settings",
+        )
+        var totalMs = 0L
+        stats.forEach { entry ->
+            val pkg = entry.packageName ?: return@forEach
+            if (pkg in excluded) return@forEach
+            if (entry.lastTimeUsed >= startOfDayMs && entry.totalTimeInForeground > 0L) {
+                totalMs += entry.totalTimeInForeground
+            }
+        }
+        return (totalMs / 60_000L).toInt().coerceAtLeast(0)
+    }
+
+    /**
      * Pure policy decision: determines whether [foregroundPackage] is permitted on screen
      * under [settings], [activeMode], and [allowedKidPackages].
      */
