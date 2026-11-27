@@ -177,14 +177,17 @@ fun AnimatedSkyBackground(
             }
         }
 
-        // Optional custom MP4 skin layer
+        // Optional custom / built-in MP4 live video world layer (auto-recomputes center-crop on rotation & resize!)
         if (activeVideoUri != null) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
                     TextureView(ctx).also { tv ->
                         exoPlayer.setVideoTextureView(tv)
-                        val applyCenterCrop = { videoW: Int, videoH: Int ->
+                        val applyCenterCrop = {
+                            val vs = exoPlayer.videoSize
+                            val videoW = vs.width
+                            val videoH = vs.height
                             val viewW = tv.width
                             val viewH = tv.height
                             if (viewW > 0 && viewH > 0 && videoW > 0 && videoH > 0) {
@@ -195,14 +198,48 @@ fun AnimatedSkyBackground(
                                 val m = AndroidMatrix()
                                 m.setScale(sx, sy, viewW / 2f, viewH / 2f)
                                 tv.setTransform(m)
+                                tv.invalidate()
                             }
                         }
-                        exoPlayer.addListener(object : Player.Listener {
-                            override fun onVideoSizeChanged(videoSize: VideoSize) {
-                                applyCenterCrop(videoSize.width, videoSize.height)
+                        tv.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+                            if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
+                                tv.post(applyCenterCrop)
                             }
-                        })
+                        }
+                        val listener = object : Player.Listener {
+                            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                tv.post(applyCenterCrop)
+                            }
+
+                            override fun onRenderedFirstFrame() {
+                                tv.post(applyCenterCrop)
+                            }
+                        }
+                        tv.tag = listener
+                        exoPlayer.addListener(listener)
+                        tv.post(applyCenterCrop)
                     }
+                },
+                update = { tv ->
+                    val vs = exoPlayer.videoSize
+                    val videoW = vs.width
+                    val videoH = vs.height
+                    val viewW = tv.width
+                    val viewH = tv.height
+                    if (viewW > 0 && viewH > 0 && videoW > 0 && videoH > 0) {
+                        val viewRatio = viewW.toFloat() / viewH.toFloat()
+                        val videoRatio = videoW.toFloat() / videoH.toFloat()
+                        val sx = if (videoRatio > viewRatio) videoRatio / viewRatio else 1f
+                        val sy = if (viewRatio > videoRatio) viewRatio / videoRatio else 1f
+                        val m = AndroidMatrix()
+                        m.setScale(sx, sy, viewW / 2f, viewH / 2f)
+                        tv.setTransform(m)
+                        tv.invalidate()
+                    }
+                },
+                onRelease = { tv ->
+                    (tv.tag as? Player.Listener)?.let { exoPlayer.removeListener(it) }
+                    exoPlayer.clearVideoTextureView(tv)
                 },
             )
         }

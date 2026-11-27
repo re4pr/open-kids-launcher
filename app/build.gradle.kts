@@ -12,8 +12,8 @@ android {
     applicationId = "io.github.re4pr.kidslauncher"
     minSdk = 28
     targetSdk = 34
-    versionCode = 7
-    versionName = "2.2.0"
+    versionCode = 8
+    versionName = "2.2.1"
   }
 
   buildTypes {
